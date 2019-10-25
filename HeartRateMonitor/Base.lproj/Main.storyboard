@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="uoT-lD-9mo">
-    <device id="retina5_9" orientation="portrait" appearance="light"/>
+    <device id="mac" appearance="dark"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -12,20 +12,21 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="HRMViewController" customModule="HeartRateMonitor" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <rect key="frame" x="0.0" y="0.0" width="800" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="100" translatesAutoresizingMaskIntoConstraints="NO" id="jMv-Nk-fez">
-                                <rect key="frame" x="52" y="197.66666666666666" width="271.33333333333331" height="416.66666666666674"/>
+                                <rect key="frame" x="264" y="94" width="272" height="412"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="N9k-Lq-Uw6">
-                                        <rect key="frame" x="0.0" y="0.0" width="271.33333333333331" height="231.66666666666666"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="272" height="229"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gx5-Hh-nFZ">
-                                                <rect key="frame" x="0.0" y="0.0" width="271.33333333333331" height="40.666666666666664"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="272" height="40"/>
                                                 <attributedString key="attributedText">
                                                     <fragment content="Current Heart Rate">
                                                         <attributes>
+                                                            <color key="NSColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             <font key="NSFont" metaFont="system" size="34"/>
                                                             <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                                             <integer key="NSUnderline" value="1"/>
@@ -35,21 +36,22 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="--" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vav-fa-HwA">
-                                                <rect key="frame" x="67.000000000000014" y="40.666666666666686" width="137.33333333333337" height="191"/>
+                                                <rect key="frame" x="67" y="40" width="138" height="189"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="160"/>
-                                                <nil key="textColor"/>
+                                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="FGq-XP-nTI">
-                                        <rect key="frame" x="0.0" y="331.66666666666674" width="271.33333333333331" height="85"/>
+                                        <rect key="frame" x="0.0" y="329" width="272" height="83"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="hsd-XG-LW6">
-                                                <rect key="frame" x="0.0" y="0.0" width="271.33333333333331" height="36"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="272" height="35"/>
                                                 <attributedString key="attributedText">
                                                     <fragment content="Body Sensor Location">
                                                         <attributes>
+                                                            <color key="NSColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             <font key="NSFont" metaFont="system" size="30"/>
                                                             <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                                             <integer key="NSUnderline" value="1"/>
@@ -59,9 +61,9 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="----" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EkB-Vx-c1s">
-                                                <rect key="frame" x="99.666666666666657" y="37" width="71.666666666666657" height="48"/>
+                                                <rect key="frame" x="100" y="36" width="72" height="47"/>
                                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="40"/>
-                                                <nil key="textColor"/>
+                                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
@@ -89,88 +91,13 @@
             </objects>
             <point key="canvasLocation" x="1732" y="116.74876847290641"/>
         </scene>
-        <!--View Controller-->
-        <scene sceneID="wMa-hI-qhG">
-            <objects>
-                <viewController id="Cya-Ad-02M" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="VQi-2N-eqL">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="90" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="yJQ-tf-gJb">
-                                <rect key="frame" x="0.0" y="88" width="375" height="690"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="eqw-oQ-VV5" customClass="BluetoothDevicesCell" customModule="HeartRateMonitor" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="90"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="eqw-oQ-VV5" id="bAa-cT-a31">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="90"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NZE-tn-jac">
-                                                    <rect key="frame" x="12" y="32.666666666666664" width="351" height="25"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="25" id="r8H-OE-Qer"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="NZE-tn-jac" firstAttribute="centerY" secondItem="bAa-cT-a31" secondAttribute="centerY" id="0Ir-oJ-cFD"/>
-                                                <constraint firstItem="NZE-tn-jac" firstAttribute="leading" secondItem="bAa-cT-a31" secondAttribute="leading" constant="12" id="EFy-aK-Ycl"/>
-                                                <constraint firstAttribute="trailing" secondItem="NZE-tn-jac" secondAttribute="trailing" constant="12" id="ldQ-AZ-j4c"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                        <connections>
-                                            <outlet property="NameBleDevice" destination="NZE-tn-jac" id="YTJ-UW-5Gl"/>
-                                        </connections>
-                                    </tableViewCell>
-                                </prototypes>
-                            </tableView>
-                        </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <constraints>
-                            <constraint firstItem="jGy-e7-Zid" firstAttribute="bottom" secondItem="yJQ-tf-gJb" secondAttribute="bottom" id="bbr-4n-BWF"/>
-                            <constraint firstItem="yJQ-tf-gJb" firstAttribute="leading" secondItem="jGy-e7-Zid" secondAttribute="leading" id="pPF-Mz-rbL"/>
-                            <constraint firstItem="yJQ-tf-gJb" firstAttribute="top" secondItem="jGy-e7-Zid" secondAttribute="top" id="pao-Hg-NCs"/>
-                            <constraint firstItem="jGy-e7-Zid" firstAttribute="trailing" secondItem="yJQ-tf-gJb" secondAttribute="trailing" id="xBe-LJ-H4L"/>
-                        </constraints>
-                        <viewLayoutGuide key="safeArea" id="jGy-e7-Zid"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="XX1-GT-MNc"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="hNL-r4-gx1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1626" y="-779"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="IsC-46-dVM">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="tgW-fb-Jkh" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Yam-DB-Wq7">
-                        <rect key="frame" x="0.0" y="44" width="375" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="Cya-Ad-02M" kind="relationship" relationship="rootViewController" id="yk3-dV-1hu"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="yPw-kk-zbu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="687" y="-779"/>
-        </scene>
         <!--Navigation Controller-->
         <scene sceneID="zO5-n8-Lck">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="uoT-lD-9mo" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="7mh-bS-nYq">
-                        <rect key="frame" x="0.0" y="44" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="800" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>

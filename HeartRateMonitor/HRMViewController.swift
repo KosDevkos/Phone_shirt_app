@@ -78,7 +78,7 @@ extension HRMViewController: CBCentralManagerDelegate {
       print("central.state is .poweredOff")
     case .poweredOn:
       print("central.state is .poweredOn")
-      centralManager.scanForPeripherals(withServices: nil)
+      centralManager.scanForPeripherals(withServices: [heartRateServiceCBUUID])
     @unknown default:
       print("fatal error")
     }
@@ -89,13 +89,13 @@ extension HRMViewController: CBCentralManagerDelegate {
   func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,
                       advertisementData: [String : Any], rssi RSSI: NSNumber) {
     print(peripheral)
-    //heartRatePeripheral = peripheral
-    //heartRatePeripheral.delegate = self
-    //centralManager.stopScan()
-    //centralManager.connect(heartRatePeripheral)
+    heartRatePeripheral = peripheral
+    heartRatePeripheral.delegate = self
+    centralManager.stopScan()
+    centralManager.connect(heartRatePeripheral)
   }
   
-  
+  // my func
   func addtoBleArray(peripheral: CBPeripheral){
     bleDevices.append(peripheral)
     
