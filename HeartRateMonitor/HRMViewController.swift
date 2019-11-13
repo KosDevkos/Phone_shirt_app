@@ -136,11 +136,11 @@ extension HRMViewController: CBPeripheralDelegate {
     switch characteristic.uuid {
     case bodySensorLocationCharacteristicCBUUID:
       let ambient_t = heartRate(from: characteristic)
-      bodySensorLocationLabel.text = String(ambient_t)
+      bodySensorLocationLabel.text = ambient_t
     case heartRateMeasurementCharacteristicCBUUID:
       let object_t = heartRate(from: characteristic)
-      heartRateLabel.text = String(object_t)
-      print("object_t: \(object_t)")
+      heartRateLabel.text = object_t
+      print(heartRateLabel.text!)
 
     default:
       print("Unhandled Characteristic UUID: \(characteristic.uuid)")
@@ -164,23 +164,17 @@ extension HRMViewController: CBPeripheralDelegate {
     }
   }
 
-  private func heartRate(from characteristic: CBCharacteristic) -> Int {
-    guard let characteristicData = characteristic.value else { return -1 }
+  private func heartRate(from characteristic: CBCharacteristic) -> String {
+    guard let characteristicData = characteristic.value else { return "error" }
     let byteArray = [UInt8](characteristicData)
 
-    // See: https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.characteristic.heart_rate_measurement.xml
-    // The heart rate mesurement is in the 2nd, or in the 2nd and 3rd bytes, i.e. one one or in two bytes
-    // The first byte of the first bit specifies the length of the heart rate data, 0 == 1 byte, 1 == 2 bytes
-    /*
-    let firstBitValue = byteArray[0] & 0x01
-    if firstBitValue == 0 {
-      // Heart Rate Value Format is in the 2nd byte
-      return Int(byteArray[1])
-    } else {
-      // Heart Rate Value Format is in the 2nd and 3rd bytes
-      return (Int(byteArray[1]) << 8) + Int(byteArray[2])
-    }
-     */
-    return Int(byteArray[0])
+    
+    let MBS:UInt8 = UInt8(byteArray[0])  // gets received MSB bits
+    let LBS:UInt8 = UInt8(byteArray[1])  // gets received LSB bits
+    let decimalPoints:UInt8 = UInt8(byteArray[2]) // gets received decimal point bits
+    let integer:Int16 = Int16( (MBS << 8) | LBS)  // combines MBS and LBS into integer
+    let resultString:String = "\(String(integer)).\(String(decimalPoints))" //conv to str
+
+    return resultString
   }
 }
