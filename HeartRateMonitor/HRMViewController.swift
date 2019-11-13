@@ -135,10 +135,10 @@ extension HRMViewController: CBPeripheralDelegate {
   func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
     switch characteristic.uuid {
     case bodySensorLocationCharacteristicCBUUID:
-      let ambient_t = heartRate(from: characteristic)
+      let ambient_t = GetTemperature(from: characteristic)
       bodySensorLocationLabel.text = ambient_t
     case heartRateMeasurementCharacteristicCBUUID:
-      let object_t = heartRate(from: characteristic)
+      let object_t = GetTemperature(from: characteristic)
       heartRateLabel.text = object_t
       print(heartRateLabel.text!)
 
@@ -164,7 +164,7 @@ extension HRMViewController: CBPeripheralDelegate {
     }
   }
 
-  private func heartRate(from characteristic: CBCharacteristic) -> String {
+  private func GetTemperature(from characteristic: CBCharacteristic) -> String {
     guard let characteristicData = characteristic.value else { return "error" }
     let byteArray = [UInt8](characteristicData)
 
