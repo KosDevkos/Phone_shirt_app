@@ -32,9 +32,9 @@ import UIKit
 import CoreBluetooth
 let OTACBUUID = CBUUID(string: "1D14D6EE-FD63-4FA1-BFA4-8F47B42119F0")
 let BlueGeckoCBUUID = CBUUID(string: "77164E9F-48C3-19AF-8668-20DA0165359E")
-let heartRateServiceCBUUID = CBUUID(string: "47715ba3-c1df-413c-9ae8-fc5942e9953f")
-let heartRateMeasurementCharacteristicCBUUID = CBUUID(string: "c48bcd49-6238-4d2d-9a6d-a6e24cd29ef6")
-let bodySensorLocationCharacteristicCBUUID = CBUUID(string: "2A38")
+let heartRateServiceCBUUID = CBUUID(string: "1b39bd78-2b85-4bdc-b469-385e1804deb4")
+let heartRateMeasurementCharacteristicCBUUID = CBUUID(string: "7352ee73-925d-4142-94a3-cfe4ace393ae")
+let bodySensorLocationCharacteristicCBUUID = CBUUID(string: "4cd89f16-d93e-4a3e-b467-00e514a40d2e")
 
 class HRMViewController: UIViewController {
 
@@ -57,10 +57,6 @@ class HRMViewController: UIViewController {
     heartRateLabel.font = UIFont.monospacedDigitSystemFont(ofSize: heartRateLabel.font!.pointSize, weight: .regular)
   }
 
-  func onHeartRateReceived(_ heartRate: Int) {
-    heartRateLabel.text = String(heartRate)
-    print("BPM: \(heartRate)")
-  }
 }
 
 extension HRMViewController: CBCentralManagerDelegate {
@@ -139,11 +135,13 @@ extension HRMViewController: CBPeripheralDelegate {
   func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
     switch characteristic.uuid {
     case bodySensorLocationCharacteristicCBUUID:
-      let bodySensorLocation = bodyLocation(from: characteristic)
-      bodySensorLocationLabel.text = bodySensorLocation
+      let ambient_t = heartRate(from: characteristic)
+      bodySensorLocationLabel.text = String(ambient_t)
     case heartRateMeasurementCharacteristicCBUUID:
-      let bpm = heartRate(from: characteristic)
-      onHeartRateReceived(bpm)
+      let object_t = heartRate(from: characteristic)
+      heartRateLabel.text = String(object_t)
+      print("object_t: \(object_t)")
+
     default:
       print("Unhandled Characteristic UUID: \(characteristic.uuid)")
     }
@@ -173,6 +171,7 @@ extension HRMViewController: CBPeripheralDelegate {
     // See: https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.characteristic.heart_rate_measurement.xml
     // The heart rate mesurement is in the 2nd, or in the 2nd and 3rd bytes, i.e. one one or in two bytes
     // The first byte of the first bit specifies the length of the heart rate data, 0 == 1 byte, 1 == 2 bytes
+    /*
     let firstBitValue = byteArray[0] & 0x01
     if firstBitValue == 0 {
       // Heart Rate Value Format is in the 2nd byte
@@ -181,5 +180,7 @@ extension HRMViewController: CBPeripheralDelegate {
       // Heart Rate Value Format is in the 2nd and 3rd bytes
       return (Int(byteArray[1]) << 8) + Int(byteArray[2])
     }
+     */
+    return Int(byteArray[0])
   }
 }
