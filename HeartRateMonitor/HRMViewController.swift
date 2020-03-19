@@ -80,7 +80,7 @@ extension HRMViewController: CBCentralManagerDelegate {
     }
   }
 
-
+//// TEEEEEEEEEEST
   
   func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,
                       advertisementData: [String : Any], rssi RSSI: NSNumber) {
