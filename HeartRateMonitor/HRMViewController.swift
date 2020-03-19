@@ -147,22 +147,7 @@ extension HRMViewController: CBPeripheralDelegate {
     }
   }
 
-  private func bodyLocation(from characteristic: CBCharacteristic) -> String {
-    guard let characteristicData = characteristic.value,
-      let byte = characteristicData.first else { return "Error" }
 
-    switch byte {
-    case 0: return "Other"
-    case 1: return "Chest"
-    case 2: return "Wrist"
-    case 3: return "Finger"
-    case 4: return "Hand"
-    case 5: return "Ear Lobe"
-    case 6: return "Foot"
-    default:
-      return "Reserved for future use"
-    }
-  }
 
   private func GetTemperature(from characteristic: CBCharacteristic) -> String {
     guard let characteristicData = characteristic.value else { return "error" }
