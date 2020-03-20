@@ -33,14 +33,22 @@ import CoreBluetooth
 let OTACBUUID = CBUUID(string: "1D14D6EE-FD63-4FA1-BFA4-8F47B42119F0")
 let BlueGeckoCBUUID = CBUUID(string: "77164E9F-48C3-19AF-8668-20DA0165359E")
 let heartRateServiceCBUUID = CBUUID(string: "1b39bd78-2b85-4bdc-b469-385e1804deb4")
-let heartRateMeasurementCharacteristicCBUUID = CBUUID(string: "7352ee73-925d-4142-94a3-cfe4ace393ae")
-let bodySensorLocationCharacteristicCBUUID = CBUUID(string: "4cd89f16-d93e-4a3e-b467-00e514a40d2e")
+let ambient_GND_CharacteristicCBUUID = CBUUID(string: "4cd89f16-d93e-4a3e-b467-00e514a40d2e")
+let object_GND_CharacteristicCBUUID = CBUUID(string: "7352ee73-925d-4142-94a3-cfe4ace393ae")
+let ambient_VDD_CharacteristicCBUUID = CBUUID(string: "a12edede-a0c7-455a-8e46-6451e081426c")
+let object_VDD_CharacteristicCBUUID = CBUUID(string: "f3422e08-a8d8-48c7-a3da-ee598987b28f")
+
 
 class HRMViewController: UIViewController {
 
-  @IBOutlet weak var heartRateLabel: UILabel!
-  @IBOutlet weak var bodySensorLocationLabel: UILabel!
-
+  @IBOutlet weak var frontObjectTemp: UILabel!
+    @IBOutlet weak var backObjectTemp: UILabel!
+    @IBOutlet weak var frontAmbientTemp: UILabel!
+    @IBOutlet weak var backAmbientTemp: UILabel!
+    @IBOutlet weak var frontDutyCycle: UILabel!
+    @IBOutlet weak var backDutyCycle: UILabel!
+    
+    
   var centralManager: CBCentralManager!
   var heartRatePeripheral: CBPeripheral!
   
@@ -54,7 +62,7 @@ class HRMViewController: UIViewController {
     centralManager = CBCentralManager(delegate: self, queue: nil)
 
     // Make the digits monospaces to avoid shifting when the numbers change
-    heartRateLabel.font = UIFont.monospacedDigitSystemFont(ofSize: heartRateLabel.font!.pointSize, weight: .regular)
+   ///frontObjectTemp.font = UIFont.monospacedDigitSystemFont(ofSize: frontObjectTemp.font!.pointSize, weight: .regular)
   }
 
 }
@@ -134,13 +142,20 @@ extension HRMViewController: CBPeripheralDelegate {
 
   func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
     switch characteristic.uuid {
-    case bodySensorLocationCharacteristicCBUUID:
-      let ambient_t = GetTemperature(from: characteristic)
-      bodySensorLocationLabel.text = ambient_t
-    case heartRateMeasurementCharacteristicCBUUID:
-      let object_t = GetTemperature(from: characteristic)
-      heartRateLabel.text = object_t
-      print(heartRateLabel.text!)
+    case ambient_VDD_CharacteristicCBUUID:
+      let ambient_t_VDD = GetTemperature(from: characteristic)
+      frontAmbientTemp.text = ambient_t_VDD
+    case object_VDD_CharacteristicCBUUID:
+      let object_t_VDD = GetTemperature(from: characteristic)
+      frontObjectTemp.text = object_t_VDD
+      print(frontObjectTemp.text!)
+    case ambient_GND_CharacteristicCBUUID:
+      let ambient_t_GND = GetTemperature(from: characteristic)
+      backAmbientTemp.text = ambient_t_GND
+    case object_GND_CharacteristicCBUUID:
+      let object_t_GND = GetTemperature(from: characteristic)
+      backObjectTemp.text = object_t_GND
+      print(frontObjectTemp.text!)
 
     default:
       print("Unhandled Characteristic UUID: \(characteristic.uuid)")
