@@ -49,6 +49,12 @@ class HRMViewController: UIViewController {
     @IBOutlet weak var backAmbientTemp: UILabel!
     @IBOutlet weak var frontDutyCycle: UILabel!
     @IBOutlet weak var backDutyCycle: UILabel!
+    @IBOutlet weak var modeSwitch: UISegmentedControl!
+    @IBAction func fronHeatSlider(_ sender: UISlider) {
+    }
+    @IBAction func backHeatSlider(_ sender: UISlider) {
+    }
+    
     
     
   var centralManager: CBCentralManager!
@@ -62,12 +68,14 @@ class HRMViewController: UIViewController {
     super.viewDidLoad()
 
     centralManager = CBCentralManager(delegate: self, queue: nil)
-
+    
     // Make the digits monospaces to avoid shifting when the numbers change
    ///frontObjectTemp.font = UIFont.monospacedDigitSystemFont(ofSize: frontObjectTemp.font!.pointSize, weight: .regular)
   }
 
 }
+
+
 
 extension HRMViewController: CBCentralManagerDelegate {
   func centralManagerDidUpdateState(_ central: CBCentralManager) {
