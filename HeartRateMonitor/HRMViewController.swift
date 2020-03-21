@@ -39,6 +39,11 @@ let ambient_VDD_CharacteristicCBUUID = CBUUID(string: "a12edede-a0c7-455a-8e46-6
 let object_VDD_CharacteristicCBUUID = CBUUID(string: "f3422e08-a8d8-48c7-a3da-ee598987b28f")
 let Front_TR_PWM_IN_CharacteristicCBUUID = CBUUID(string: "3d586659-fd18-43c7-88ad-d386dab601e3")
 let Back_TR_PWM_IN_CharacteristicCBUUID = CBUUID(string: "c7bd8529-02ff-481f-a8bc-5b5c34357bc2")
+let Front_TR_PWM_OUT_CharacteristicCBUUID = CBUUID(string: "f79f7794-bfd5-455d-a1ae-b97d4b17774a")
+let Back_TR_PWM_OUT_CharacteristicCBUUID = CBUUID(string: "8eb124d6-afaf-4b75-a83f-a14b61b241a4")
+
+private var Front_TR_PWM_OUT_Characteristic: CBCharacteristic?
+private var Back_TR_PWM_OUT_Characteristic: CBCharacteristic?
 
 
 class HRMViewController: UIViewController {
@@ -50,18 +55,40 @@ class HRMViewController: UIViewController {
     @IBOutlet weak var frontDutyCycle: UILabel!
     @IBOutlet weak var backDutyCycle: UILabel!
     @IBOutlet weak var modeSwitch: UISegmentedControl!
-    @IBAction func fronHeatSlider(_ sender: UISlider) {
+    @IBOutlet weak var frontHeatSlider: UISlider!
+    @IBOutlet weak var backHeatSlider: UISlider!
+    
+  
+    @IBAction func frontHeatSliderDidChange(_ sender: UISlider) {
+      print("front:",frontHeatSlider.value);
+      let slider:UInt8 = UInt8(frontHeatSlider.value)
+      writeDutyCycleToChar( withCharacteristic: Front_TR_PWM_OUT_Characteristic!, withValue: Data([slider]))
     }
-    @IBAction func backHeatSlider(_ sender: UISlider) {
+    @IBAction func backHeatSliderDidChange(_ sender: UISlider) {
+      print("back:",backHeatSlider.value);
+      let slider:UInt8 = UInt8(backHeatSlider.value)
+      writeDutyCycleToChar( withCharacteristic: Back_TR_PWM_OUT_Characteristic!, withValue: Data([slider]))
     }
-    
-    
-    
+
+  private func writeDutyCycleToChar( withCharacteristic characteristic: CBCharacteristic, withValue value: Data) {
+      
+      // Check if it has the write property
+      if characteristic.properties.contains(.writeWithoutResponse) && heartRatePeripheral != nil {
+          
+          heartRatePeripheral.writeValue(value, for: characteristic, type: .withoutResponse)
+
+      }
+      
+  }
+
   var centralManager: CBCentralManager!
   var heartRatePeripheral: CBPeripheral!
   
   //var bleDevices: [BleDevice] = []
   var bleDevices: [CBPeripheral] = []
+  
+  
+
 
 
   override func viewDidLoad() {
@@ -98,7 +125,6 @@ extension HRMViewController: CBCentralManagerDelegate {
     }
   }
 
-//// TEEEEEEEEEEST
   
   func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,
                       advertisementData: [String : Any], rssi RSSI: NSNumber) {
@@ -147,7 +173,24 @@ extension HRMViewController: CBPeripheralDelegate {
         print("\(characteristic.uuid): properties contains .notify")
         peripheral.setNotifyValue(true, for: characteristic)
       }
+      else if characteristic.uuid == Front_TR_PWM_OUT_CharacteristicCBUUID {
+          print("Green LED characteristic found")
+          
+          // Set the characteristic
+          Front_TR_PWM_OUT_Characteristic = characteristic
+          
+          // Unmask green slider
+          //greenSlider.isEnabled = true
+      } else if characteristic.uuid == Back_TR_PWM_OUT_CharacteristicCBUUID {
+          print("Blue LED characteristic found");
+          
+          // Set the characteristic
+          Back_TR_PWM_OUT_Characteristic = characteristic
+          
+          // Unmask blue slider
+         // blueSlider.isEnabled = true
     }
+  }
   }
 
   func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
@@ -204,3 +247,5 @@ extension HRMViewController: CBPeripheralDelegate {
       return resultString
   }
 }
+
+

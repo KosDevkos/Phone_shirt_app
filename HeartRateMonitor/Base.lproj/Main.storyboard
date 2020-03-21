@@ -304,7 +304,7 @@
                                                                         <color key="maximumTrackTintColor" systemColor="systemBlueColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                         <color key="thumbTintColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                                                         <connections>
-                                                                            <action selector="fronHeatSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="w8j-fL-1RH"/>
+                                                                            <action selector="frontHeatSliderDidChange:" destination="BYZ-38-t0r" eventType="valueChanged" id="jrC-zk-XBX"/>
                                                                         </connections>
                                                                     </slider>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" text="100%" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jfY-Ug-7pu">
@@ -349,7 +349,7 @@
                                                                         <color key="maximumTrackTintColor" systemColor="systemBlueColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                         <color key="thumbTintColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                                                         <connections>
-                                                                            <action selector="backHeatSlider:" destination="BYZ-38-t0r" eventType="valueChanged" id="JKb-ZE-Jcz"/>
+                                                                            <action selector="backHeatSliderDidChange:" destination="BYZ-38-t0r" eventType="valueChanged" id="gdz-sz-Sxe"/>
                                                                         </connections>
                                                                     </slider>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" text="100%" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zzM-W0-IGl">
@@ -398,9 +398,11 @@
                     <connections>
                         <outlet property="backAmbientTemp" destination="2yQ-i6-6bR" id="nXS-lH-lcJ"/>
                         <outlet property="backDutyCycle" destination="NFc-Q4-aNZ" id="Kyv-S2-hpH"/>
+                        <outlet property="backHeatSlider" destination="D8O-vk-XZ8" id="C0w-dH-mtE"/>
                         <outlet property="backObjectTemp" destination="odd-Hw-H2V" id="1Ea-6a-LMs"/>
                         <outlet property="frontAmbientTemp" destination="gHF-mY-Rws" id="wxb-RY-ezq"/>
                         <outlet property="frontDutyCycle" destination="wxq-X4-4HM" id="TV6-ql-s5V"/>
+                        <outlet property="frontHeatSlider" destination="Jym-4O-ykX" id="5jK-gv-aYm"/>
                         <outlet property="frontObjectTemp" destination="vav-fa-HwA" id="Ylc-M4-CeI"/>
                         <outlet property="modeSwitch" destination="GWF-Oc-KJN" id="vnG-GG-FvI"/>
                     </connections>
