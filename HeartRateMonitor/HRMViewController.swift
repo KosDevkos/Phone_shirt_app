@@ -37,6 +37,8 @@ let ambient_GND_CharacteristicCBUUID = CBUUID(string: "4cd89f16-d93e-4a3e-b467-0
 let object_GND_CharacteristicCBUUID = CBUUID(string: "7352ee73-925d-4142-94a3-cfe4ace393ae")
 let ambient_VDD_CharacteristicCBUUID = CBUUID(string: "a12edede-a0c7-455a-8e46-6451e081426c")
 let object_VDD_CharacteristicCBUUID = CBUUID(string: "f3422e08-a8d8-48c7-a3da-ee598987b28f")
+let Front_TR_PWM_IN_CharacteristicCBUUID = CBUUID(string: "3d586659-fd18-43c7-88ad-d386dab601e3")
+let Back_TR_PWM_IN_CharacteristicCBUUID = CBUUID(string: "c7bd8529-02ff-481f-a8bc-5b5c34357bc2")
 
 
 class HRMViewController: UIViewController {
@@ -148,14 +150,21 @@ extension HRMViewController: CBPeripheralDelegate {
     case object_VDD_CharacteristicCBUUID:
       let object_t_VDD = GetTemperature(from: characteristic)
       frontObjectTemp.text = object_t_VDD
-      print(frontObjectTemp.text!)
+      //print(frontObjectTemp.text!)
     case ambient_GND_CharacteristicCBUUID:
       let ambient_t_GND = GetTemperature(from: characteristic)
       backAmbientTemp.text = ambient_t_GND
     case object_GND_CharacteristicCBUUID:
       let object_t_GND = GetTemperature(from: characteristic)
       backObjectTemp.text = object_t_GND
-      print(frontObjectTemp.text!)
+      //print(frontObjectTemp.text!)
+    case Front_TR_PWM_IN_CharacteristicCBUUID:
+      let front_TR_PWM = GetDutyCycle(from: characteristic)
+      frontDutyCycle.text = front_TR_PWM
+    case Back_TR_PWM_IN_CharacteristicCBUUID:
+      let back_TR_PWM = GetDutyCycle(from: characteristic)
+      backDutyCycle.text = back_TR_PWM
+      print(backDutyCycle.text!)
 
     default:
       print("Unhandled Characteristic UUID: \(characteristic.uuid)")
@@ -176,5 +185,14 @@ extension HRMViewController: CBPeripheralDelegate {
     let resultString:String = "\(String(integer)).\(String(decimalPoints))" //conv to str
 
     return resultString
+  }
+    
+    private func GetDutyCycle(from characteristic: CBCharacteristic) -> String {
+      guard let characteristicData = characteristic.value else { return "error" }
+      let byteArray = [UInt8](characteristicData)
+      let duty:UInt8 = UInt8(byteArray[0])
+      let resultString:String = "\(String(duty))%" //conv to str
+
+      return resultString
   }
 }
