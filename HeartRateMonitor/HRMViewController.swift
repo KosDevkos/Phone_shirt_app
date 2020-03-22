@@ -30,6 +30,15 @@
 
 import UIKit
 import CoreBluetooth
+
+//File type for CSV (named as headers of the CSV)
+class Task: NSObject {
+    var date: String = ""
+    var name: String = ""
+    var startTime: String = ""
+    var endTime: String = ""
+}
+
 let OTACBUUID = CBUUID(string: "1D14D6EE-FD63-4FA1-BFA4-8F47B42119F0")
 let BlueGeckoCBUUID = CBUUID(string: "77164E9F-48C3-19AF-8668-20DA0165359E")
 let heartRateServiceCBUUID = CBUUID(string: "1b39bd78-2b85-4bdc-b469-385e1804deb4")
@@ -42,8 +51,14 @@ let Back_TR_PWM_IN_CharacteristicCBUUID = CBUUID(string: "c7bd8529-02ff-481f-a8b
 let Front_TR_PWM_OUT_CharacteristicCBUUID = CBUUID(string: "f79f7794-bfd5-455d-a1ae-b97d4b17774a")
 let Back_TR_PWM_OUT_CharacteristicCBUUID = CBUUID(string: "8eb124d6-afaf-4b75-a83f-a14b61b241a4")
 
+
+/// Variables used to store detected characteristics in the required format for buletooth "write without responce" action
 private var Front_TR_PWM_OUT_Characteristic: CBCharacteristic?
 private var Back_TR_PWM_OUT_Characteristic: CBCharacteristic?
+
+/// Variables required to generate CSV file
+var taskArr = [Task]()
+var task: Task!
 
 
 class HRMViewController: UIViewController {
@@ -93,13 +108,61 @@ class HRMViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
+    // Testing CSV by appending random stuff to Array
+    task = Task()
+    for _ in 0..<5 {
+        task.name = "Raj"
+        task.date = "\(Date())"
+        task.startTime = "Start \(Date())"
+        task.endTime = "End \(Date())"
+        taskArr.append(task!)
+    }
+
+    createCSV()
 
     centralManager = CBCentralManager(delegate: self, queue: nil)
     
     // Make the digits monospaces to avoid shifting when the numbers change
    ///frontObjectTemp.font = UIFont.monospacedDigitSystemFont(ofSize: frontObjectTemp.font!.pointSize, weight: .regular)
   }
+  
+  
+  //
+  // The fuction should be inside of a "class HRMViewController: UIViewController{}" due to self.present()
+  func createCSV() -> Void {
+      let fileName = "Tasks.csv"
+      let path = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
+      var csvText = "Date,Task Name,Time Started,Time Ended\n"
 
+      for task in taskArr {
+          let newLine = "\(task.date),\(task.name),\(task.startTime),\(task.endTime)\n"
+          csvText.append(newLine)
+      }
+
+      do {
+          try csvText.write(to: path!, atomically: true, encoding: String.Encoding.utf8)
+          
+        
+        // Create the Array which includes the files you want to share
+          var filesToShare = [Any]()
+
+          // Add the path of the file to the Array
+          filesToShare.append(path!)
+
+          // Make the activityViewContoller which shows the share-view
+          let activityViewController = UIActivityViewController(activityItems: filesToShare, applicationActivities: nil)
+
+          // Show the share-view
+          self.present(activityViewController, animated: true, completion: nil)
+        
+        
+      } catch {
+          print("Failed to create file")
+          print("\(error)")
+      }
+      print(path ?? "not found")
+    
+  }
 }
 
 
@@ -247,5 +310,8 @@ extension HRMViewController: CBPeripheralDelegate {
       return resultString
   }
 }
+
+
+
 
 
