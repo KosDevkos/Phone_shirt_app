@@ -32,7 +32,7 @@ import UIKit
 import CoreBluetooth
 
 //File type for CSV (named as headers of the CSV)
-class Task: NSObject {
+class CsvFile: NSObject {
     var time: String = ""
     var objFrontTemp: String = ""
     var objBackTemp: String = ""
@@ -68,8 +68,8 @@ private var isRecording_Characteristic: CBCharacteristic?
 
 
 /// Variables required to generate CSV file
-var taskArr = [Task]()
-var task: Task!
+var csvFileArr = [CsvFile]()
+var csvFile: CsvFile!
 
 
 
@@ -105,7 +105,9 @@ class HRMViewController: UIViewController {
         // After all nessesary data is in the array, create and export a CSV file
         createCSV()
         //clean the CSV array
-        taskArr = []
+        csvFileArr = []
+        
+        // Changing button title back to "Record"
         dataRecordButton.setTitle("Record", for: .normal)
       }
     }
@@ -185,12 +187,17 @@ class HRMViewController: UIViewController {
   //
   // The fuction should be inside of a "class HRMViewController: UIViewController{}" due to self.present()
   func createCSV() -> Void {
-      let fileName = "Tasks.csv"
+      //Created a default fileName string variable for CSV file name
+      var fileName: String = "Unnamed.csv"
+      // If anything is in the text field, rename the CSV file name
+      if (fileNameTextField.text != ""){
+          fileName = "\(fileNameTextField.text!).csv"
+      }
       let path = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
       var csvText = "time,objFrontTemp,objBackTemp,ambFrontTemp,ambBackTemp,dutyCycleFront,dutyCycleBack\n"
 
-      for task in taskArr {
-          let newLine = "\(task.time),\(task.objFrontTemp),\(task.objBackTemp),\(task.ambFrontTemp),\(task.ambBackTemp),\(task.dutyCycleFront),\(task.dutyCycleBack)\n"
+      for csvFile in csvFileArr {
+          let newLine = "\(csvFile.time),\(csvFile.objFrontTemp),\(csvFile.objBackTemp),\(csvFile.ambFrontTemp),\(csvFile.ambBackTemp),\(csvFile.dutyCycleFront),\(csvFile.dutyCycleBack)\n"
           csvText.append(newLine)
       }
       do {
@@ -318,17 +325,17 @@ extension HRMViewController: CBPeripheralDelegate {
         // Since all data is sent at the same time, all other values are updated as well
         if dataRecordingEnable == 1 {
           // Creating a NEW varible that will be appended to an array
-          task = Task()
+          csvFile = CsvFile()
           // assiging new readings to that variable
-          task.time = timeStamp
-          task.objFrontTemp = objFrontTemp
-          task.objBackTemp = objBackTemp
-          task.ambFrontTemp = ambFrontTemp
-          task.ambBackTemp = ambBackTemp
-          task.dutyCycleFront = dutyCycleFront
-          task.dutyCycleBack = dutyCycleBack
+          csvFile.time = timeStamp
+          csvFile.objFrontTemp = objFrontTemp
+          csvFile.objBackTemp = objBackTemp
+          csvFile.ambFrontTemp = ambFrontTemp
+          csvFile.ambBackTemp = ambBackTemp
+          csvFile.dutyCycleFront = dutyCycleFront
+          csvFile.dutyCycleBack = dutyCycleBack
           // Appending that new variable to the array
-          taskArr.append(task!)
+          csvFileArr.append(csvFile!)
         }
         print("timeStamp is \(timeStamp)")
     case ambient_VDD_CharacteristicCBUUID:
