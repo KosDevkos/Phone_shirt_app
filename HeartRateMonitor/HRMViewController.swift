@@ -33,10 +33,13 @@ import CoreBluetooth
 
 //File type for CSV (named as headers of the CSV)
 class Task: NSObject {
-    var date: String = ""
-    var name: String = ""
-    var startTime: String = ""
-    var endTime: String = ""
+    var time: String = ""
+    var objFrontTemp: String = ""
+    var objBackTemp: String = ""
+    var ambFrontTemp: String = ""
+    var ambBackTemp: String = ""
+    var dutyCycleFront: String = ""
+    var dutyCycleBack: String = ""
 }
 
 let OTACBUUID = CBUUID(string: "1D14D6EE-FD63-4FA1-BFA4-8F47B42119F0")
@@ -61,6 +64,8 @@ var taskArr = [Task]()
 var task: Task!
 
 
+
+
 class HRMViewController: UIViewController {
 
   @IBOutlet weak var frontObjectTemp: UILabel!
@@ -69,11 +74,30 @@ class HRMViewController: UIViewController {
     @IBOutlet weak var backAmbientTemp: UILabel!
     @IBOutlet weak var frontDutyCycle: UILabel!
     @IBOutlet weak var backDutyCycle: UILabel!
+   
+    @IBOutlet weak var fileNameTextField: UITextField!
+    @IBOutlet weak var dataRecordButton: UIButton!
+    
+    
     @IBOutlet weak var modeSwitch: UISegmentedControl!
     @IBOutlet weak var frontHeatSlider: UISlider!
     @IBOutlet weak var backHeatSlider: UISlider!
     
   
+    // If Record button is tapped
+    @IBAction func dataRecordButtonPushed(_ sender: UIButton) {
+      if dataRecordButton.titleLabel!.text == "Record"{
+        dataRecordingEnable = true
+        dataRecordButton.setTitle("Stop", for: .normal)
+      }
+      else if dataRecordButton.titleLabel!.text == "Stop"{
+        dataRecordingEnable = false
+        // After all nessesary data is in the array, create and export a CSV file
+        createCSV()
+        dataRecordButton.setTitle("Record", for: .normal)
+      }
+    }
+    
     @IBAction func frontHeatSliderDidChange(_ sender: UISlider) {
       print("front:",frontHeatSlider.value);
       let slider:UInt8 = UInt8(frontHeatSlider.value)
@@ -85,6 +109,7 @@ class HRMViewController: UIViewController {
       writeDutyCycleToChar( withCharacteristic: Back_TR_PWM_OUT_Characteristic!, withValue: Data([slider]))
     }
 
+  // the fuction sends the ducy cycle chosen by slider to the microcontroller via BLE
   private func writeDutyCycleToChar( withCharacteristic characteristic: CBCharacteristic, withValue value: Data) {
       
       // Check if it has the write property
@@ -102,60 +127,65 @@ class HRMViewController: UIViewController {
   //var bleDevices: [BleDevice] = []
   var bleDevices: [CBPeripheral] = []
   
-  
+  // Flag that enables data recording if the data recording button is tapped
+  var dataRecordingEnable: Bool = false
+  // Variable for CSV data
+  var time: String = "0"
+  var objFrontTemp: String = "0"
+  var objBackTemp: String = "0"
+  var ambFrontTemp: String = "0"
+  var ambBackTemp: String = "0"
+  var dutyCycleFront: String = "0"
+  var dutyCycleBack: String = "0"
 
 
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    // Testing CSV by appending random stuff to Array
-    task = Task()
-    for _ in 0..<5 {
-        task.name = "Raj"
-        task.date = "\(Date())"
-        task.startTime = "Start \(Date())"
-        task.endTime = "End \(Date())"
-        taskArr.append(task!)
-    }
+    
+    // This variable of type ...gesture.. is needed to detect tap and hide the keyboard
+    let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(HRMViewController.keyboardDismiss))
+    // This gesture recognizer is nessesary to detect the tap and hide the keyboard when editing text fields
+    view.addGestureRecognizer(tap)
+    
 
-    createCSV()
 
+
+
+    // This manager will turn on the Bluetooth?
     centralManager = CBCentralManager(delegate: self, queue: nil)
     
-    // Make the digits monospaces to avoid shifting when the numbers change
+    // Make the digits monospaces to avoid shifting when the numbers change [what?]
    ///frontObjectTemp.font = UIFont.monospacedDigitSystemFont(ofSize: frontObjectTemp.font!.pointSize, weight: .regular)
   }
   
-  
+  // This objective-c object is nessesary to hide the keyboard when done typing to the text field
+  @objc func keyboardDismiss(){
+    view.endEditing(true)
+  }
+
+    
   //
   // The fuction should be inside of a "class HRMViewController: UIViewController{}" due to self.present()
   func createCSV() -> Void {
       let fileName = "Tasks.csv"
       let path = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
-      var csvText = "Date,Task Name,Time Started,Time Ended\n"
+      var csvText = "time,objFrontTemp,objBackTemp,ambFrontTemp,ambBackTemp,dutyCycleFront,dutyCycleBack\n"
 
       for task in taskArr {
-          let newLine = "\(task.date),\(task.name),\(task.startTime),\(task.endTime)\n"
+          let newLine = "\(task.time),\(task.objFrontTemp),\(task.objBackTemp),\(task.ambFrontTemp),\(task.ambBackTemp),\(task.dutyCycleFront),\(task.dutyCycleBack)\n"
           csvText.append(newLine)
       }
-
       do {
           try csvText.write(to: path!, atomically: true, encoding: String.Encoding.utf8)
-          
-        
         // Create the Array which includes the files you want to share
           var filesToShare = [Any]()
-
           // Add the path of the file to the Array
           filesToShare.append(path!)
-
           // Make the activityViewContoller which shows the share-view
           let activityViewController = UIActivityViewController(activityItems: filesToShare, applicationActivities: nil)
-
           // Show the share-view
           self.present(activityViewController, animated: true, completion: nil)
-        
-        
       } catch {
           print("Failed to create file")
           print("\(error)")
@@ -261,24 +291,46 @@ extension HRMViewController: CBPeripheralDelegate {
     case ambient_VDD_CharacteristicCBUUID:
       let ambient_t_VDD = GetTemperature(from: characteristic)
       frontAmbientTemp.text = ambient_t_VDD
+      ambFrontTemp = ambient_t_VDD
+
+      // If data recording is enabled, append new reading to the array for CSV
+      if dataRecordingEnable == true {
+        // Creating a NEW varible that will be appended to an array
+        task = Task()
+        // assiging new readings to that variable
+        task.time = time
+        task.objFrontTemp = objFrontTemp
+        task.objBackTemp = objBackTemp
+        task.ambFrontTemp = ambFrontTemp
+        task.ambBackTemp = ambBackTemp
+        task.dutyCycleFront = dutyCycleFront
+        task.dutyCycleBack = dutyCycleBack
+        // Appending that new variable to the array
+        taskArr.append(task!)
+      }
+      
     case object_VDD_CharacteristicCBUUID:
       let object_t_VDD = GetTemperature(from: characteristic)
       frontObjectTemp.text = object_t_VDD
-      //print(frontObjectTemp.text!)
+      objFrontTemp = object_t_VDD
+      print("obje front is \(objFrontTemp)")
     case ambient_GND_CharacteristicCBUUID:
       let ambient_t_GND = GetTemperature(from: characteristic)
       backAmbientTemp.text = ambient_t_GND
+      ambBackTemp = ambient_t_GND
     case object_GND_CharacteristicCBUUID:
       let object_t_GND = GetTemperature(from: characteristic)
       backObjectTemp.text = object_t_GND
-      //print(frontObjectTemp.text!)
+      objBackTemp = object_t_GND
     case Front_TR_PWM_IN_CharacteristicCBUUID:
       let front_TR_PWM = GetDutyCycle(from: characteristic)
       frontDutyCycle.text = front_TR_PWM
+      dutyCycleFront = front_TR_PWM
     case Back_TR_PWM_IN_CharacteristicCBUUID:
       let back_TR_PWM = GetDutyCycle(from: characteristic)
       backDutyCycle.text = back_TR_PWM
-      print(backDutyCycle.text!)
+      dutyCycleBack = back_TR_PWM
+      print("back duty is \(dutyCycleBack)")
 
     default:
       print("Unhandled Characteristic UUID: \(characteristic.uuid)")
