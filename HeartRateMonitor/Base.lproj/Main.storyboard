@@ -343,7 +343,9 @@
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gZH-Ed-CV8">
                                                                 <rect key="frame" x="0.0" y="115" width="273" height="51"/>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="32"/>
-                                                                <state key="normal" title="Record"/>
+                                                                <state key="normal" title="Record">
+                                                                    <color key="titleColor" systemColor="opaqueSeparatorColor" red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                </state>
                                                                 <connections>
                                                                     <action selector="dataRecordButtonPushed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Gxn-Ka-619"/>
                                                                 </connections>

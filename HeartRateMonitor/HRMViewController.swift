@@ -98,10 +98,23 @@ class HRMViewController: UIViewController {
         case 0: // Switched to automatic mode
             print("automatic mode Selected")
             modeOfOperation = 0
+      
             
+            if ModeOfOperation_Characteristic != nil {
+            writeToChar( withCharacteristic: ModeOfOperation_Characteristic!, withValue: Data([UInt8(modeOfOperation)]))
+              
+            frontHeatSlider.isEnabled = false
+            backHeatSlider.isEnabled = false
+            }
         case 1: // Switched to manual mode
             print("manual mode Selected")
             modeOfOperation = 1
+            if ModeOfOperation_Characteristic != nil {
+            writeToChar( withCharacteristic: ModeOfOperation_Characteristic!, withValue: Data([UInt8(modeOfOperation)]))
+              
+            frontHeatSlider.isEnabled = true
+            backHeatSlider.isEnabled = true
+            }
           
         default:
             break
@@ -110,14 +123,16 @@ class HRMViewController: UIViewController {
     
     // If Record button is tapped
     @IBAction func dataRecordButtonPushed(_ sender: UIButton) {
-      if dataRecordButton.titleLabel!.text == "Record"{
+      // If current button state is "Record" AND chip is connected, update dataRecordingEnable
+      if ((dataRecordButton.titleLabel!.text == "Record") && (isRecording_Characteristic != nil)){
         dataRecordingEnable = 1
-        writeDutyCycleToChar( withCharacteristic: isRecording_Characteristic!, withValue: Data([UInt8(dataRecordingEnable)]))
+
+        writeToChar( withCharacteristic: isRecording_Characteristic!, withValue: Data([UInt8(dataRecordingEnable)]))
         dataRecordButton.setTitle("Stop", for: .normal)
       }
-      else if dataRecordButton.titleLabel!.text == "Stop"{
+      else if ((dataRecordButton.titleLabel!.text == "Stop") && (isRecording_Characteristic != nil)){
         dataRecordingEnable = 0
-        writeDutyCycleToChar( withCharacteristic: isRecording_Characteristic!, withValue: Data([UInt8(dataRecordingEnable)]))
+        writeToChar( withCharacteristic: isRecording_Characteristic!, withValue: Data([UInt8(dataRecordingEnable)]))
         // After all nessesary data is in the array, create and export a CSV file
         createCSV()
         //clean the CSV array
@@ -132,7 +147,9 @@ class HRMViewController: UIViewController {
       if (modeOfOperation == 1){
         print("front:",frontHeatSlider.value);
         let slider:UInt8 = UInt8(frontHeatSlider.value)
-        writeDutyCycleToChar( withCharacteristic: Front_TR_PWM_OUT_Characteristic!, withValue: Data([slider]))
+        if Front_TR_PWM_OUT_Characteristic != nil{
+          writeToChar( withCharacteristic: Front_TR_PWM_OUT_Characteristic!, withValue: Data([slider]))
+        }
       }
     }
   
@@ -140,24 +157,20 @@ class HRMViewController: UIViewController {
       if (modeOfOperation == 1){
         print("back:",backHeatSlider.value);
         let slider:UInt8 = UInt8(backHeatSlider.value)
-        writeDutyCycleToChar( withCharacteristic: Back_TR_PWM_OUT_Characteristic!, withValue: Data([slider]))
+        if Back_TR_PWM_OUT_Characteristic != nil{
+          writeToChar( withCharacteristic: Back_TR_PWM_OUT_Characteristic!, withValue: Data([slider]))
+        }
       }
     }
 
   // the fuction sends the ducy cycle chosen by slider to the microcontroller via BLE
-  private func writeDutyCycleToChar( withCharacteristic characteristic: CBCharacteristic, withValue value: Data) {
+  private func writeToChar( withCharacteristic characteristic: CBCharacteristic, withValue value: Data) {
       // Check if it has the write property
       if characteristic.properties.contains(.writeWithoutResponse) && heartRatePeripheral != nil {
           heartRatePeripheral.writeValue(value, for: characteristic, type: .withoutResponse)
       }
   }
   
-  private func writeIsRecordingToChar( withCharacteristic characteristic: CBCharacteristic, withValue value: Data) {
-      // Check if it has the write property
-      if characteristic.properties.contains(.writeWithoutResponse) && heartRatePeripheral != nil {
-          heartRatePeripheral.writeValue(value, for: characteristic, type: .withoutResponse)
-      }
-  }
 
   
   
@@ -195,8 +208,10 @@ class HRMViewController: UIViewController {
     // This gesture recognizer is nessesary to detect the tap and hide the keyboard when editing text fields
     view.addGestureRecognizer(tap)
     
-
-
+    // Disable sliders at at sart-up, since automatic mode is defeault at start-up
+    frontHeatSlider.isEnabled = false
+    backHeatSlider.isEnabled = false
+    modeSwitch.isEnabled = false
 
 
     // This manager will turn on the Bluetooth?
@@ -205,6 +220,10 @@ class HRMViewController: UIViewController {
     // Make the digits monospaces to avoid shifting when the numbers change [what?]
    ///frontObjectTemp.font = UIFont.monospacedDigitSystemFont(ofSize: frontObjectTemp.font!.pointSize, weight: .regular)
   }
+  
+  
+  
+  
   
   // This objective-c object is nessesary to hide the keyboard when done typing to the text field
   @objc func keyboardDismiss(){
@@ -322,22 +341,24 @@ extension HRMViewController: CBPeripheralDelegate {
           print("Front_TR_PWM_OUT_Characteristic characteristic found")
           // Set the characteristic
           Front_TR_PWM_OUT_Characteristic = characteristic
-          // Unmask green slider
-          //greenSlider.isEnabled = true
+          frontHeatSlider.isEnabled = false
       } else if characteristic.uuid == Back_TR_PWM_OUT_CharacteristicCBUUID {
           print("Back_TR_PWM_OUT_Characteristic characteristic found");
           // Set the characteristic
           Back_TR_PWM_OUT_Characteristic = characteristic
-          // Unmask blue slider
-         // blueSlider.isEnabled = true
       } else if characteristic.uuid == isRecording_CharacteristicCBUUID {
-             print("isRecording_Characteristic characteristic found");
-             // Set the characteristic
-             isRecording_Characteristic = characteristic
+          print("isRecording_Characteristic characteristic found");
+          // Set the characteristic
+          isRecording_Characteristic = characteristic
+        dataRecordButton.setTitleColor(.systemBlue, for: .normal)
        }else if characteristic.uuid == ModeOfOperation_CharacteristicCBUUID {
              print("ModeOfOperation_Characteristic characteristic found");
              // Set the characteristic
              ModeOfOperation_Characteristic = characteristic
+             // Activate thwe mode switch segmented controller
+             modeSwitch.isEnabled = true
+             // Send the current mode of operation to the chip, once it is connencted
+             writeToChar( withCharacteristic: ModeOfOperation_Characteristic!, withValue: Data([UInt8(dataRecordingEnable)]))
        }
       
   }
