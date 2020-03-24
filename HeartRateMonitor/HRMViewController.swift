@@ -91,7 +91,23 @@ class HRMViewController: UIViewController {
     @IBOutlet weak var frontHeatSlider: UISlider!
     @IBOutlet weak var backHeatSlider: UISlider!
     
-  
+    // Action that triggers when mode switch has changed position
+    @IBAction func modeChanged(_ sender: UISegmentedControl) {
+        switch modeSwitch.selectedSegmentIndex
+        {
+        case 0: // Switched to automatic mode
+            print("automatic mode Selected")
+            modeOfOperation = 0
+            
+        case 1: // Switched to manual mode
+            print("manual mode Selected")
+            modeOfOperation = 1
+          
+        default:
+            break
+        }
+    }
+    
     // If Record button is tapped
     @IBAction func dataRecordButtonPushed(_ sender: UIButton) {
       if dataRecordButton.titleLabel!.text == "Record"{
@@ -113,14 +129,19 @@ class HRMViewController: UIViewController {
     }
     
     @IBAction func frontHeatSliderDidChange(_ sender: UISlider) {
-      print("front:",frontHeatSlider.value);
-      let slider:UInt8 = UInt8(frontHeatSlider.value)
-      writeDutyCycleToChar( withCharacteristic: Front_TR_PWM_OUT_Characteristic!, withValue: Data([slider]))
+      if (modeOfOperation == 1){
+        print("front:",frontHeatSlider.value);
+        let slider:UInt8 = UInt8(frontHeatSlider.value)
+        writeDutyCycleToChar( withCharacteristic: Front_TR_PWM_OUT_Characteristic!, withValue: Data([slider]))
+      }
     }
+  
     @IBAction func backHeatSliderDidChange(_ sender: UISlider) {
-      print("back:",backHeatSlider.value);
-      let slider:UInt8 = UInt8(backHeatSlider.value)
-      writeDutyCycleToChar( withCharacteristic: Back_TR_PWM_OUT_Characteristic!, withValue: Data([slider]))
+      if (modeOfOperation == 1){
+        print("back:",backHeatSlider.value);
+        let slider:UInt8 = UInt8(backHeatSlider.value)
+        writeDutyCycleToChar( withCharacteristic: Back_TR_PWM_OUT_Characteristic!, withValue: Data([slider]))
+      }
     }
 
   // the fuction sends the ducy cycle chosen by slider to the microcontroller via BLE
@@ -148,6 +169,11 @@ class HRMViewController: UIViewController {
   
   // Flag that enables data recording if the data recording button is tapped
   var dataRecordingEnable: UInt8 = 0
+  
+  var modeOfOperation: UInt8 = 0
+  
+  
+  
   // Variable for CSV data
   var timeStamp: String = "0"
   var objFrontTemp: String = "0"
@@ -156,6 +182,8 @@ class HRMViewController: UIViewController {
   var ambBackTemp: String = "0"
   var dutyCycleFront: String = "0"
   var dutyCycleBack: String = "0"
+  
+  
 
 
 

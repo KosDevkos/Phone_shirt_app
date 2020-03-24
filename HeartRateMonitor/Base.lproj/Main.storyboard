@@ -221,6 +221,9 @@
                                                                     <segment title="Automatic"/>
                                                                     <segment title="Manual"/>
                                                                 </segments>
+                                                                <connections>
+                                                                    <action selector="modeChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="d6f-yT-y7k"/>
+                                                                </connections>
                                                             </segmentedControl>
                                                         </subviews>
                                                     </stackView>
