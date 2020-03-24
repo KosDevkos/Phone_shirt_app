@@ -299,20 +299,26 @@ extension HRMViewController: CBCentralManagerDelegate {
     centralManager.connect(heartRatePeripheral)
   }
   
-  // my func
-  func addtoBleArray(peripheral: CBPeripheral){
-    bleDevices.append(peripheral)
-    
-    
-  }
   
-
+  // Function triggers when the peripheral did connect
 
   func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
     print("Connected!")
     heartRatePeripheral.discoverServices([heartRateServiceCBUUID])
   }
+  
+  // Function triggers when the peripheral did disconnect
+  func centralManager(_ central: CBCentralManager,
+  didDisconnectPeripheral peripheral: CBPeripheral,
+  error: Error?){
+    print("Disconnected :(")
+    // It will try to reconnect to the peripheral
+    centralManager.connect(heartRatePeripheral)
+  }
+  
 }
+
+
 
 extension HRMViewController: CBPeripheralDelegate {
   func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
@@ -327,32 +333,28 @@ extension HRMViewController: CBPeripheralDelegate {
     guard let characteristics = service.characteristics else { return }
 
     for characteristic in characteristics {
-      print(characteristic)
+      //print(characteristic)
 
       if characteristic.properties.contains(.read) {
-        print("\(characteristic.uuid): properties contains .read")
+        //print("\(characteristic.uuid): properties contains .read")
         peripheral.readValue(for: characteristic)
       }
       if characteristic.properties.contains(.notify) {
-        print("\(characteristic.uuid): properties contains .notify")
+        //print("\(characteristic.uuid): properties contains .notify")
         peripheral.setNotifyValue(true, for: characteristic)
       }
       else if characteristic.uuid == Front_TR_PWM_OUT_CharacteristicCBUUID {
-          print("Front_TR_PWM_OUT_Characteristic characteristic found")
           // Set the characteristic
           Front_TR_PWM_OUT_Characteristic = characteristic
           frontHeatSlider.isEnabled = false
       } else if characteristic.uuid == Back_TR_PWM_OUT_CharacteristicCBUUID {
-          print("Back_TR_PWM_OUT_Characteristic characteristic found");
           // Set the characteristic
           Back_TR_PWM_OUT_Characteristic = characteristic
       } else if characteristic.uuid == isRecording_CharacteristicCBUUID {
-          print("isRecording_Characteristic characteristic found");
           // Set the characteristic
           isRecording_Characteristic = characteristic
         dataRecordButton.setTitleColor(.systemBlue, for: .normal)
        }else if characteristic.uuid == ModeOfOperation_CharacteristicCBUUID {
-             print("ModeOfOperation_Characteristic characteristic found");
              // Set the characteristic
              ModeOfOperation_Characteristic = characteristic
              // Activate thwe mode switch segmented controller
