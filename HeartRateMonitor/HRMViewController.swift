@@ -134,15 +134,19 @@ class HRMViewController: UIViewController {
         dataRecordButton.setTitle("Stop", for: .normal)
       }
       else if ((dataRecordButton.titleLabel!.text == "Stop") && (isRecording_Characteristic != nil)){
+        // Change the fileName text color in textField to red TO REMIND TO CHANGE THE NAME FOR THE NEXT EXPRIMENT
+        fileNameTextField.textColor = .red
+        // Changing button title back to "Record"
+        dataRecordButton.setTitle("Record", for: .normal)
+        
+        // Change dataRecordingEnable flag to 0
         dataRecordingEnable = 0
+        // Send the flag to the peripheral
         writeToChar( withCharacteristic: isRecording_Characteristic!, withValue: Data([UInt8(dataRecordingEnable)]))
         // After all nessesary data is in the array, create and export a CSV file
         createCSV()
-        fileNameTextField.textColor = .red
         //clean the CSV array
         csvFileArr = []
-        // Changing button title back to "Record"
-        dataRecordButton.setTitle("Record", for: .normal)
       }
     }
     
@@ -166,11 +170,16 @@ class HRMViewController: UIViewController {
       }
     }
     
-
+    // This action is required to change the color of file name in the text filed back to black
+    // after user did change the name of the previous experiment to a new one
     @IBAction func startedEditingFileNameTextFiled(_ sender: UITextField) {
         fileNameTextField.textColor = .label
-
     }
+    // This action is required to hide keyboard by pressing "return". Yes, it is empty. I also have no idea why it works.
+    @IBAction func exitOnReturnFileNameTextField(_ sender: UITextField) {
+    }
+    
+    
     
 //    fileNameTextField.textColor = .label
 //startedEditingFileNameTextFiled
@@ -346,17 +355,17 @@ extension HRMViewController: CBCentralManagerDelegate {
     // If data is recording, finish recording and export CSV
     if dataRecordButton.titleLabel!.text == "Stop"{
       
+      // Change the fileName text color in textField to red TO REMIND TO CHANGE THE NAME FOR THE NEXT EXPRIMENT
+      fileNameTextField.textColor = .red
+      // Changing button title back to "Record"
+      dataRecordButton.setTitle("Record", for: .normal)
+      
       dataRecordingEnable = 0
       // Finish data recording, if disconnedted and export CSV
       // After all nessesary data is in the array, create and export a CSV file
       createCSV()
       //clean the CSV array
       csvFileArr = []
-      
-      // Change the fileName text color in textField to red TO REMIND TO CHANGE THE NAME FOR THE NEXT EXPRIMENT
-      fileNameTextField.textColor = .red
-      // Changing button title back to "Record"
-      dataRecordButton.setTitle("Record", for: .normal)
     }
     // It will try to reconnect to the peripheral
     centralManager.connect(heartRatePeripheral)
