@@ -44,7 +44,7 @@ class CsvFile: NSObject {
 
 let OTACBUUID = CBUUID(string: "1D14D6EE-FD63-4FA1-BFA4-8F47B42119F0")
 let BlueGeckoCBUUID = CBUUID(string: "77164E9F-48C3-19AF-8668-20DA0165359E")
-let heartRateServiceCBUUID = CBUUID(string: "1b39bd78-2b85-4bdc-b469-385e1804deb4")
+let temperatureServiceCBUUID = CBUUID(string: "1b39bd78-2b85-4bdc-b469-385e1804deb4")
 let ambient_GND_CharacteristicCBUUID = CBUUID(string: "4cd89f16-d93e-4a3e-b467-00e514a40d2e")
 let object_GND_CharacteristicCBUUID = CBUUID(string: "7352ee73-925d-4142-94a3-cfe4ace393ae")
 let ambient_VDD_CharacteristicCBUUID = CBUUID(string: "a12edede-a0c7-455a-8e46-6451e081426c")
@@ -75,9 +75,8 @@ var csvFile: CsvFile!
 
 
 class HRMViewController: UIViewController {
-    
-    
 
+    // Outlets, which allow to read data (eg. text) from user interface elements (ex. labels, switches)
     @IBOutlet weak var heatControllerTitle: UINavigationItem!
     @IBOutlet weak var frontObjectTemp: UILabel!
     @IBOutlet weak var backObjectTemp: UILabel!
@@ -89,42 +88,42 @@ class HRMViewController: UIViewController {
     @IBOutlet weak var fileNameTextField: UITextField!
     @IBOutlet weak var dataRecordButton: UIButton!
     
-    
     @IBOutlet weak var modeSwitch: UISegmentedControl!
     @IBOutlet weak var frontHeatSlider: UISlider!
     @IBOutlet weak var backHeatSlider: UISlider!
     
     // Action that triggers when mode switch has changed position
     @IBAction func modeChanged(_ sender: UISegmentedControl) {
+        // Switch statement handles all possible modes of operation
         switch modeSwitch.selectedSegmentIndex
         {
         case 0: // Switched to automatic mode
             print("automatic mode Selected")
             modeOfOperation = 0
-      
-            
+            // If the app is connected to the periphearal, then send an updated modeOfOperation to the peripheral.
             if ModeOfOperation_Characteristic != nil {
-            writeToChar( withCharacteristic: ModeOfOperation_Characteristic!, withValue: Data([UInt8(modeOfOperation)]))
-              
-            frontHeatSlider.isEnabled = false
-            backHeatSlider.isEnabled = false
+              writeToChar( withCharacteristic: ModeOfOperation_Characteristic!, withValue: Data([UInt8(modeOfOperation)]))
+              // Disable sliders. It is inside of the if statemntet, since if the peripheral is disconnected
+              // then sliders are handeled in a different place
+              frontHeatSlider.isEnabled = false
+              backHeatSlider.isEnabled = false
             }
         case 1: // Switched to manual mode
             print("manual mode Selected")
             modeOfOperation = 1
+            // If the app is connected to the periphearal, then send an updated modeOfOperation to the peripheral.
             if ModeOfOperation_Characteristic != nil {
-            writeToChar( withCharacteristic: ModeOfOperation_Characteristic!, withValue: Data([UInt8(modeOfOperation)]))
-              
-            frontHeatSlider.isEnabled = true
-            backHeatSlider.isEnabled = true
+              writeToChar( withCharacteristic: ModeOfOperation_Characteristic!, withValue: Data([UInt8(modeOfOperation)]))
+              // Enable sliders
+              frontHeatSlider.isEnabled = true
+              backHeatSlider.isEnabled = true
             }
           
         default:
             break
         }
     }
-    
-    // If Record button is tapped
+    // If "Record" button is tapped
     @IBAction func dataRecordButtonPushed(_ sender: UIButton) {
       // If current button state is "Record" AND chip is connected, update dataRecordingEnable
       if ((dataRecordButton.titleLabel!.text == "Record") && (isRecording_Characteristic != nil)){
@@ -149,7 +148,6 @@ class HRMViewController: UIViewController {
         csvFileArr = []
       }
     }
-    
     @IBAction func frontHeatSliderDidChange(_ sender: UISlider) {
       if (modeOfOperation == 1){
         print("front:",frontHeatSlider.value);
@@ -159,7 +157,6 @@ class HRMViewController: UIViewController {
         }
       }
     }
-  
     @IBAction func backHeatSliderDidChange(_ sender: UISlider) {
       if (modeOfOperation == 1){
         print("back:",backHeatSlider.value);
@@ -169,20 +166,24 @@ class HRMViewController: UIViewController {
         }
       }
     }
-    
     // This action is required to change the color of file name in the text filed back to black
     // after user did change the name of the previous experiment to a new one
+    // !!! Consider blocking alert instad of red higligting!
     @IBAction func startedEditingFileNameTextFiled(_ sender: UITextField) {
+        // Removes red color and sets default ones
         fileNameTextField.textColor = .label
+        fileNameTextField.backgroundColor = .none
+      // If the user left text filed empty, highlight it in RED to remind them to type the file name.
+      // Note, .trimmingCharacters(in: .whitespacesAndNewlines) removes all spaces from string.
+      // Hence, the if statement won't consider spaces as charaters
+      if fileNameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+          fileNameTextField.backgroundColor = .red
+        }
     }
     // This action is required to hide keyboard by pressing "return". Yes, it is empty. I also have no idea why it works.
     @IBAction func exitOnReturnFileNameTextField(_ sender: UITextField) {
     }
     
-    
-    
-//    fileNameTextField.textColor = .label
-//startedEditingFileNameTextFiled
 
 
   // the fuction sends the ducy cycle chosen by slider to the microcontroller via BLE
@@ -196,7 +197,7 @@ class HRMViewController: UIViewController {
     
 
   
-  
+  //Variables for core BLE operation
   var centralManager: CBCentralManager!
   var heartRatePeripheral: CBPeripheral!
   
@@ -205,12 +206,12 @@ class HRMViewController: UIViewController {
   
   // Flag that enables data recording if the data recording button is tapped
   var dataRecordingEnable: UInt8 = 0
-  
+  // Mode of opearation variable (Auto=0; Manual=1)
   var modeOfOperation: UInt8 = 0
   
   
   
-  // Variable for CSV data
+  // Variables for CSV data
   var timeStamp: String = "0"
   var objFrontTemp: String = "0"
   var objBackTemp: String = "0"
@@ -222,7 +223,7 @@ class HRMViewController: UIViewController {
   
 
 
-
+  // viewDidLoad triggers when the app opens for the firs time
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -237,14 +238,12 @@ class HRMViewController: UIViewController {
     modeSwitch.isEnabled = false
 
 
-    // This manager will turn on the Bluetooth?
+    // This manager will initiate BLE central manager
     centralManager = CBCentralManager(delegate: self, queue: nil)
     
-    // Make the digits monospaces to avoid shifting when the numbers change [what?]
+    // Make the digits monospaces to avoid shifting when the numbers change [what? !!! check what it does]
    ///frontObjectTemp.font = UIFont.monospacedDigitSystemFont(ofSize: frontObjectTemp.font!.pointSize, weight: .regular)
   }
-  
-  
   
   
   
@@ -254,8 +253,8 @@ class HRMViewController: UIViewController {
   }
 
     
-  //
-  // The fuction should be inside of a "class HRMViewController: UIViewController{}" due to self.present()
+  // The fuction creates and exports the CSV file when data is collected
+  // The fuction should be inside of a "class HRMViewController: UIViewController{}" due to self.present() function
   func createCSV() -> Void {
       //Created a default fileName string variable for CSV file name
       var fileName: String = "Unnamed.csv"
@@ -285,12 +284,13 @@ class HRMViewController: UIViewController {
           print("\(error)")
       }
       print(path ?? "not found")
-    
   }
-}
+  
+}  // END OF: class HRMViewController: UIViewController {}
 
 
 
+// At first, BLE central manager will update its status
 extension HRMViewController: CBCentralManagerDelegate {
   func centralManagerDidUpdateState(_ central: CBCentralManager) {
     switch central.state {
@@ -306,31 +306,37 @@ extension HRMViewController: CBCentralManagerDelegate {
       print("central.state is .poweredOff")
     case .poweredOn:
       print("central.state is .poweredOn")
-      centralManager.scanForPeripherals(withServices: [heartRateServiceCBUUID])
+      // If the phone's BLE is ON, then look for a peripheral that advertises a temperatureServiceCBUUID service
+      centralManager.scanForPeripherals(withServices: [temperatureServiceCBUUID])
     @unknown default:
       print("fatal error")
     }
   }
 
-  
+  // If a desired peipheral is found
   func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,
                       advertisementData: [String : Any], rssi RSSI: NSNumber) {
     print(peripheral)
+    // Record the peripheral
     heartRatePeripheral = peripheral
     heartRatePeripheral.delegate = self
+    // Stop BLE scanning
     centralManager.stopScan()
+    // Connect to desired peripheral
     centralManager.connect(heartRatePeripheral)
   }
   
   
-  // Function triggers when the peripheral did connect
-
+  
+  // Function triggers when the peripheral did connect to the app
   func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
     print("Connected!")
+    // Update the top label
     heatControllerTitle.title = "Heat controller (ON)"
-
-    heartRatePeripheral.discoverServices([heartRateServiceCBUUID])
+    // Not sure. Does it check for other services that were not advertised?
+    heartRatePeripheral.discoverServices([temperatureServiceCBUUID])
   }
+  
   
   // Function triggers when the peripheral did disconnect
   func centralManager(_ central: CBCentralManager,
@@ -338,9 +344,10 @@ extension HRMViewController: CBCentralManagerDelegate {
   error: Error?){
     print("Disconnected :(")
     
+    // Update the top label
     heatControllerTitle.title = "Heat controller (OFF)"
     
-    // Reset characteristics
+    // Reset characteristics, so the app know that it can not send anything
     Front_TR_PWM_OUT_Characteristic = nil
     Back_TR_PWM_OUT_Characteristic = nil
     ModeOfOperation_Characteristic = nil
@@ -371,7 +378,7 @@ extension HRMViewController: CBCentralManagerDelegate {
     centralManager.connect(heartRatePeripheral)
   }
   
-}
+} // END OF: extension HRMViewController: CBCentralManagerDelegate {}
 
 
 
@@ -417,31 +424,35 @@ extension HRMViewController: CBPeripheralDelegate {
       } else if characteristic.uuid == isRecording_CharacteristicCBUUID {
           // Set the characteristic
           isRecording_Characteristic = characteristic
-        dataRecordButton.setTitleColor(.systemBlue, for: .normal)
-        // Send current
-        writeToChar( withCharacteristic: isRecording_Characteristic!, withValue: Data([UInt8(dataRecordingEnable)]))
+          dataRecordButton.setTitleColor(.systemBlue, for: .normal)
+          // Send current
+          writeToChar( withCharacteristic: isRecording_Characteristic!, withValue: Data([UInt8(dataRecordingEnable)]))
        }else if characteristic.uuid == ModeOfOperation_CharacteristicCBUUID {
-             // Set the characteristic
-             ModeOfOperation_Characteristic = characteristic
-             // Activate thwe mode switch segmented controller
-             modeSwitch.isEnabled = true
-             // Send the current mode of operation to the chip, once it is connencted
-             writeToChar( withCharacteristic: ModeOfOperation_Characteristic!, withValue: Data([UInt8(dataRecordingEnable)]))
+          // Set the characteristic
+          ModeOfOperation_Characteristic = characteristic
+          // Activate thwe mode switch segmented controller
+          modeSwitch.isEnabled = true
+          // Send the current mode of operation to the chip, once it is connencted
+          writeToChar( withCharacteristic: ModeOfOperation_Characteristic!, withValue: Data([UInt8(dataRecordingEnable)]))
        }
       
-  }
-  }
-
+    }
+    
+  } // END OF:   func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {}
+  
+  // NEW DATA IS RECEIVED BY THE APP FROM THE PHERIPHERAL
+  // The function triggers when the pheripheral send an updated value for one of the characteristics
   func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
     switch characteristic.uuid {
       case TimeStamp_CharacteristicCBUUID:
         let gotTime = GetTime(from: characteristic)
         timeStamp = gotTime
         
-        // If data recording is enabled, append new reading to the array for CSV
-        // Since all data is sent at the same time, all other values are updated as well
+        // If data recording is enabled, append new reading to the array for CSV.
+        // Since all data is sent at the same time, all other values are updated as well by this point.
         if dataRecordingEnable == 1 {
-          // Creating a NEW varible that will be appended to an array
+          // Creating a NEW varible that will be appended to an array, important!
+          // If csvFile variable was instad a global variable, then the folllowing code will rewrite all instances of csvFile each time to the latest value.
           csvFile = CsvFile()
           // assiging new readings to that variable
           csvFile.time = timeStamp
@@ -461,75 +472,80 @@ extension HRMViewController: CBPeripheralDelegate {
       frontAmbientTemp.text = ambient_t_VDD
       // updating a global variable for later use in CSV
       ambFrontTemp = ambient_t_VDD
-    // Rest are like case 1
     case object_VDD_CharacteristicCBUUID:
       let object_t_VDD = GetTemperature(from: characteristic)
+      // updating a label on the screen
       frontObjectTemp.text = object_t_VDD
+      // updating a global variable for later use in CSV
       objFrontTemp = object_t_VDD
       print("obje front is \(objFrontTemp)")
     case ambient_GND_CharacteristicCBUUID:
       let ambient_t_GND = GetTemperature(from: characteristic)
+      // updating a label on the screen
       backAmbientTemp.text = ambient_t_GND
+      // updating a global variable for later use in CSV
       ambBackTemp = ambient_t_GND
     case object_GND_CharacteristicCBUUID:
       let object_t_GND = GetTemperature(from: characteristic)
+      // updating a label on the screen
       backObjectTemp.text = object_t_GND
+      // updating a global variable for later use in CSV
       objBackTemp = object_t_GND
     case Front_TR_PWM_IN_CharacteristicCBUUID:
       let front_TR_PWM = GetDutyCycle(from: characteristic)
+      // updating a label on the screen
       frontDutyCycle.text = front_TR_PWM
+      // updating a global variable for later use in CSV
       dutyCycleFront = front_TR_PWM
     case Back_TR_PWM_IN_CharacteristicCBUUID:
       let back_TR_PWM = GetDutyCycle(from: characteristic)
+      // updating a label on the screen
       backDutyCycle.text = back_TR_PWM
+      // updating a global variable for later use in CSV
       dutyCycleBack = back_TR_PWM
       print("back duty is \(dutyCycleBack)")
-
     default:
       print("Unhandled Characteristic UUID: \(characteristic.uuid)")
     }
   }
 
 
-
+// Fuction handles and encodes teperature data received from an updated charasteristic
   private func GetTemperature(from characteristic: CBCharacteristic) -> String {
     guard let characteristicData = characteristic.value else { return "error" }
     let byteArray = [UInt8](characteristicData)
 
-    
-    let MSB:UInt8 = UInt8(byteArray[0])  // gets received MSB bits
-    let LSB:UInt8 = UInt8(byteArray[1])  // gets received LSB bits
+    // !!! Temperature might be negative, consider using Int8 instead UInt8 for MSB
+    let MSB:UInt8 = UInt8(byteArray[0])  // covert single array value MSB byte to usigned integer
+    let LSB:UInt8 = UInt8(byteArray[1])  // covert single array value LSB byte to usigned integer
     let decimalPoints:UInt8 = UInt8(byteArray[2]) // gets received decimal point bits
-    let integer:Int16 = Int16( (MSB << 8) | LSB)  // combines MBS and LBS into integer
-    let resultString:String = "\(String(integer)).\(String(decimalPoints))" //conv to str
+    let integer:Int16 = Int16( (MSB << 8) | LSB)  // megres MBS and LBS into a single integer
+    let resultString:String = "\(String(integer)).\(String(decimalPoints))" //conv interger to string
 
     return resultString
   }
-    
+  
+    // Fuction handles and encodes Duty Cycle data received from an updated charasteristic
     private func GetDutyCycle(from characteristic: CBCharacteristic) -> String {
       guard let characteristicData = characteristic.value else { return "error" }
       let byteArray = [UInt8](characteristicData)
-      let duty:UInt8 = UInt8(byteArray[0])
-      let resultString:String = "\(String(duty))" //conv to str
+      let duty:UInt8 = UInt8(byteArray[0])      // covert single array value to usigned integer
+      let resultString:String = "\(String(duty))" //conv interger to string
 
       return resultString
   }
   
+  
+    // Fuction handles and encodes Time Stamp data received from an updated charasteristic
     private func GetTime(from characteristic: CBCharacteristic) -> String {
       guard let characteristicData = characteristic.value else { return "error" }
       let byteArray = [UInt8](characteristicData)
-      
-      let MSB3:UInt32 = UInt32(byteArray[0])  //
-      let BS2:UInt32 = UInt32(byteArray[1])  //
-      let BS1:UInt32 = UInt32(byteArray[2]) //
+      let MSB3:UInt32 = UInt32(byteArray[0])    // covert single array value to usigned integer
+      let BS2:UInt32 = UInt32(byteArray[1])    //
+      let BS1:UInt32 = UInt32(byteArray[2])   //
       let LSB0:UInt32 = UInt32(byteArray[3]) //
-      print("MSB3 is \(MSB3)")
-      print("BS2 is \(BS2)")
-      print("BS1 is \(BS1)")
-      print("LSB0 is \(LSB0)")
-      let integer:UInt32 = UInt32( (MSB3 << 24) | (BS2 << 16) | (BS1 << 8) | LSB0)
-      print("integer is \(integer)")
-      let resultString:String = "\(String(integer))" //conv to str
+      let integer:UInt32 = UInt32( (MSB3 << 24) | (BS2 << 16) | (BS1 << 8) | LSB0)  // Bitwise merge all separate integers into a single one
+      let resultString:String = "\(String(integer))" //conv interger to string
       return resultString
   }
 }
