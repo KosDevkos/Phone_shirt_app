@@ -7,7 +7,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Heat controller-->
+        <!--Heat controller (OFF)-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="HRMViewController" customModule="HeartRateMonitor" customModuleProvider="target" sceneMemberID="viewController">
@@ -19,16 +19,16 @@
                                 <rect key="frame" x="0.0" y="88" width="414" height="1492"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VQl-IO-0Mz">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="1573"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="1578"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="jMv-Nk-fez">
-                                                <rect key="frame" x="50.5" y="24" width="313" height="1499"/>
+                                                <rect key="frame" x="50.5" y="24" width="313" height="1504"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Fo1-9W-UaY" userLabel="object T stack">
-                                                        <rect key="frame" x="29" y="0.0" width="255.5" height="137.5"/>
+                                                        <rect key="frame" x="19" y="0.0" width="275.5" height="140"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R4f-Ne-EMC">
-                                                                <rect key="frame" x="0.0" y="0.0" width="255.5" height="33.5"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="275.5" height="36"/>
                                                                 <attributedString key="attributedText">
                                                                     <fragment content="Object's Temperature">
                                                                         <attributes>
@@ -42,7 +42,7 @@
                                                                 <nil key="highlightedColor"/>
                                                             </label>
                                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="firstBaseline" spacing="70" translatesAutoresizingMaskIntoConstraints="NO" id="Qjk-cG-E7I">
-                                                                <rect key="frame" x="4.5" y="43.5" width="246" height="94"/>
+                                                                <rect key="frame" x="14.5" y="46" width="246" height="94"/>
                                                                 <subviews>
                                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="N9k-Lq-Uw6">
                                                                         <rect key="frame" x="0.0" y="0.0" width="88" height="94"/>
@@ -83,10 +83,10 @@
                                                         </subviews>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="hMG-yj-Yxi" userLabel="ambient T stack">
-                                                        <rect key="frame" x="25" y="202.5" width="263.5" height="137.5"/>
+                                                        <rect key="frame" x="18" y="205" width="277" height="140"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ud3-SB-5Ef">
-                                                                <rect key="frame" x="0.0" y="0.0" width="263.5" height="33.5"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="277" height="36"/>
                                                                 <attributedString key="attributedText">
                                                                     <fragment content="Ambient Temperature">
                                                                         <attributes>
@@ -100,7 +100,7 @@
                                                                 <nil key="highlightedColor"/>
                                                             </label>
                                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="firstBaseline" spacing="70" translatesAutoresizingMaskIntoConstraints="NO" id="87B-wH-AYc">
-                                                                <rect key="frame" x="8.5" y="43.5" width="246" height="94"/>
+                                                                <rect key="frame" x="15.5" y="46" width="246" height="94"/>
                                                                 <subviews>
                                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="mhf-1J-GiH">
                                                                         <rect key="frame" x="0.0" y="0.0" width="88" height="94"/>
@@ -141,7 +141,7 @@
                                                         </subviews>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="a5V-YA-s5G" userLabel="Duty cycle stack">
-                                                        <rect key="frame" x="33.5" y="405" width="246" height="145"/>
+                                                        <rect key="frame" x="33.5" y="410" width="246" height="145"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zO1-Ht-cxc">
                                                                 <rect key="frame" x="43.5" y="0.0" width="159.5" height="41"/>
@@ -199,7 +199,7 @@
                                                         </subviews>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="69m-mP-KrO" userLabel="Mode stack">
-                                                        <rect key="frame" x="23.5" y="615" width="266" height="92"/>
+                                                        <rect key="frame" x="23.5" y="620" width="266" height="92"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cWa-2R-Xbl">
                                                                 <rect key="frame" x="0.0" y="0.0" width="266" height="41"/>
@@ -228,7 +228,7 @@
                                                         </subviews>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="N9o-dj-hdZ" userLabel="Front lvl stack">
-                                                        <rect key="frame" x="23.5" y="772" width="266.5" height="81.5"/>
+                                                        <rect key="frame" x="23.5" y="777" width="266.5" height="81.5"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fhl-IR-Qkn">
                                                                 <rect key="frame" x="0.0" y="0.0" width="266.5" height="41"/>
@@ -273,7 +273,7 @@
                                                         </subviews>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="wMA-3f-iFQ" userLabel="Back lvl stack">
-                                                        <rect key="frame" x="25" y="918.5" width="263.5" height="81.5"/>
+                                                        <rect key="frame" x="25" y="923.5" width="263.5" height="81.5"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Ks-rO-lVE">
                                                                 <rect key="frame" x="0.0" y="0.0" width="263.5" height="41"/>
@@ -318,7 +318,7 @@
                                                         </subviews>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="2qe-c2-XaC" userLabel="File record stack">
-                                                        <rect key="frame" x="20" y="1065" width="273" height="166"/>
+                                                        <rect key="frame" x="20" y="1070" width="273" height="166"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="400" translatesAutoresizingMaskIntoConstraints="NO" id="xFA-zN-JAg">
                                                                 <rect key="frame" x="0.0" y="0.0" width="273" height="41"/>
@@ -339,6 +339,9 @@
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                 <textInputTraits key="textInputTraits"/>
+                                                                <connections>
+                                                                    <action selector="startedEditingFileNameTextFiled:" destination="BYZ-38-t0r" eventType="editingChanged" id="mgB-5O-lJd"/>
+                                                                </connections>
                                                             </textField>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gZH-Ed-CV8">
                                                                 <rect key="frame" x="0.0" y="115" width="273" height="51"/>
@@ -353,7 +356,7 @@
                                                         </subviews>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="7pL-Rh-6fN" userLabel="Dummy space">
-                                                        <rect key="frame" x="25" y="1296" width="263.5" height="203"/>
+                                                        <rect key="frame" x="25" y="1301" width="263.5" height="203"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="      Illia Kosvin Electronics and Computer Science University of Southampton 2020" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="10" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bLb-li-IYR">
                                                                 <rect key="frame" x="0.0" y="0.0" width="263.5" height="203"/>
@@ -406,7 +409,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Heat controller" id="oM9-J4-V4h">
+                    <navigationItem key="navigationItem" title="Heat controller (OFF)" id="oM9-J4-V4h">
                         <barButtonItem key="backBarButtonItem" title="back" id="WIq-gZ-BEp"/>
                     </navigationItem>
                     <size key="freeformSize" width="414" height="1600"/>
@@ -421,6 +424,7 @@
                         <outlet property="frontDutyCycle" destination="wxq-X4-4HM" id="TV6-ql-s5V"/>
                         <outlet property="frontHeatSlider" destination="Jym-4O-ykX" id="5jK-gv-aYm"/>
                         <outlet property="frontObjectTemp" destination="vav-fa-HwA" id="Ylc-M4-CeI"/>
+                        <outlet property="heatControllerTitle" destination="oM9-J4-V4h" id="qqk-6p-xjz"/>
                         <outlet property="modeSwitch" destination="GWF-Oc-KJN" id="vnG-GG-FvI"/>
                     </connections>
                 </viewController>

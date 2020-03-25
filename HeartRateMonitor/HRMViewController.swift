@@ -75,8 +75,11 @@ var csvFile: CsvFile!
 
 
 class HRMViewController: UIViewController {
+    
+    
 
-  @IBOutlet weak var frontObjectTemp: UILabel!
+    @IBOutlet weak var heatControllerTitle: UINavigationItem!
+    @IBOutlet weak var frontObjectTemp: UILabel!
     @IBOutlet weak var backObjectTemp: UILabel!
     @IBOutlet weak var frontAmbientTemp: UILabel!
     @IBOutlet weak var backAmbientTemp: UILabel!
@@ -135,9 +138,9 @@ class HRMViewController: UIViewController {
         writeToChar( withCharacteristic: isRecording_Characteristic!, withValue: Data([UInt8(dataRecordingEnable)]))
         // After all nessesary data is in the array, create and export a CSV file
         createCSV()
+        fileNameTextField.textColor = .red
         //clean the CSV array
         csvFileArr = []
-        
         // Changing button title back to "Record"
         dataRecordButton.setTitle("Record", for: .normal)
       }
@@ -162,6 +165,16 @@ class HRMViewController: UIViewController {
         }
       }
     }
+    
+
+    @IBAction func startedEditingFileNameTextFiled(_ sender: UITextField) {
+        fileNameTextField.textColor = .label
+
+    }
+    
+//    fileNameTextField.textColor = .label
+//startedEditingFileNameTextFiled
+
 
   // the fuction sends the ducy cycle chosen by slider to the microcontroller via BLE
   private func writeToChar( withCharacteristic characteristic: CBCharacteristic, withValue value: Data) {
@@ -171,6 +184,7 @@ class HRMViewController: UIViewController {
       }
   }
   
+    
 
   
   
@@ -304,6 +318,8 @@ extension HRMViewController: CBCentralManagerDelegate {
 
   func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
     print("Connected!")
+    heatControllerTitle.title = "Heat controller (ON)"
+
     heartRatePeripheral.discoverServices([heartRateServiceCBUUID])
   }
   
@@ -312,6 +328,36 @@ extension HRMViewController: CBCentralManagerDelegate {
   didDisconnectPeripheral peripheral: CBPeripheral,
   error: Error?){
     print("Disconnected :(")
+    
+    heatControllerTitle.title = "Heat controller (OFF)"
+    
+    // Reset characteristics
+    Front_TR_PWM_OUT_Characteristic = nil
+    Back_TR_PWM_OUT_Characteristic = nil
+    ModeOfOperation_Characteristic = nil
+    isRecording_Characteristic = nil
+    
+    // Disable user inputs
+    frontHeatSlider.isEnabled = false
+    backHeatSlider.isEnabled = false
+    modeSwitch.isEnabled = false
+    dataRecordButton.setTitleColor(.opaqueSeparator, for: .normal)
+    
+    // If data is recording, finish recording and export CSV
+    if dataRecordButton.titleLabel!.text == "Stop"{
+      
+      dataRecordingEnable = 0
+      // Finish data recording, if disconnedted and export CSV
+      // After all nessesary data is in the array, create and export a CSV file
+      createCSV()
+      //clean the CSV array
+      csvFileArr = []
+      
+      // Change the fileName text color in textField to red TO REMIND TO CHANGE THE NAME FOR THE NEXT EXPRIMENT
+      fileNameTextField.textColor = .red
+      // Changing button title back to "Record"
+      dataRecordButton.setTitle("Record", for: .normal)
+    }
     // It will try to reconnect to the peripheral
     centralManager.connect(heartRatePeripheral)
   }
@@ -346,14 +392,25 @@ extension HRMViewController: CBPeripheralDelegate {
       else if characteristic.uuid == Front_TR_PWM_OUT_CharacteristicCBUUID {
           // Set the characteristic
           Front_TR_PWM_OUT_Characteristic = characteristic
-          frontHeatSlider.isEnabled = false
+          if modeOfOperation == 0 {
+            frontHeatSlider.isEnabled = false
+          }else if modeOfOperation == 1{
+            frontHeatSlider.isEnabled = true
+          }
       } else if characteristic.uuid == Back_TR_PWM_OUT_CharacteristicCBUUID {
           // Set the characteristic
           Back_TR_PWM_OUT_Characteristic = characteristic
+          if modeOfOperation == 0 {
+            backHeatSlider.isEnabled = false
+          }else if modeOfOperation == 1{
+            backHeatSlider.isEnabled = true
+          }
       } else if characteristic.uuid == isRecording_CharacteristicCBUUID {
           // Set the characteristic
           isRecording_Characteristic = characteristic
         dataRecordButton.setTitleColor(.systemBlue, for: .normal)
+        // Send current
+        writeToChar( withCharacteristic: isRecording_Characteristic!, withValue: Data([UInt8(dataRecordingEnable)]))
        }else if characteristic.uuid == ModeOfOperation_CharacteristicCBUUID {
              // Set the characteristic
              ModeOfOperation_Characteristic = characteristic
