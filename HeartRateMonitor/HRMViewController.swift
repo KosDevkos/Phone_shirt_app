@@ -117,6 +117,11 @@ class HRMViewController: UIViewController {
               // Enable sliders
               frontHeatSlider.isEnabled = true
               backHeatSlider.isEnabled = true
+              // If switched to manual, send the current value of sliders
+              if ((Front_TR_PWM_OUT_Characteristic != nil) && (Back_TR_PWM_OUT_Characteristic != nil)){
+                writeToChar( withCharacteristic: Front_TR_PWM_OUT_Characteristic!, withValue: Data([UInt8(frontHeatSlider.value)]))
+                writeToChar( withCharacteristic: Back_TR_PWM_OUT_Characteristic!, withValue: Data([UInt8(frontHeatSlider.value)]))
+              }
             }
           
         default:
@@ -381,16 +386,18 @@ extension HRMViewController: CBCentralManagerDelegate {
 } // END OF: extension HRMViewController: CBCentralManagerDelegate {}
 
 
-
-extension HRMViewController: CBPeripheralDelegate {
-  func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-    guard let services = peripheral.services else { return }
-    for service in services {
-      print(service)
-      peripheral.discoverCharacteristics(nil, for: service)
+  //
+  extension HRMViewController: CBPeripheralDelegate {
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+      guard let services = peripheral.services else { return }
+      for service in services {
+        print(service)
+        peripheral.discoverCharacteristics(nil, for: service)
+      }
     }
-  }
 
+  
+  //
   func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
     guard let characteristics = service.characteristics else { return }
 
@@ -433,12 +440,17 @@ extension HRMViewController: CBPeripheralDelegate {
           // Activate thwe mode switch segmented controller
           modeSwitch.isEnabled = true
           // Send the current mode of operation to the chip, once it is connencted
-          writeToChar( withCharacteristic: ModeOfOperation_Characteristic!, withValue: Data([UInt8(dataRecordingEnable)]))
+          writeToChar( withCharacteristic: ModeOfOperation_Characteristic!, withValue: Data([UInt8(modeOfOperation)]))
        }
       
     }
     
   } // END OF:   func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {}
+  
+  
+  
+  
+  
   
   // NEW DATA IS RECEIVED BY THE APP FROM THE PHERIPHERAL
   // The function triggers when the pheripheral send an updated value for one of the characteristics
@@ -510,6 +522,8 @@ extension HRMViewController: CBPeripheralDelegate {
   }
 
 
+  
+  
 // Fuction handles and encodes teperature data received from an updated charasteristic
   private func GetTemperature(from characteristic: CBCharacteristic) -> String {
     guard let characteristicData = characteristic.value else { return "error" }
