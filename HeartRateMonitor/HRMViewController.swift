@@ -113,7 +113,7 @@ class HRMViewController: UIViewController {
       frontDesiredTempLabel.text = "\(frontDesiredTempStepper.value)°C"
       
       // REQUIRED TO MULTIPLY BY 2 TO BE ABLE TO SEND AS INTEGERS. Steper step is 0.5.
-      frontDesiredTemp = UInt8(frontDesiredTempStepper.value)  * 2
+      frontDesiredTemp = UInt8(frontDesiredTempStepper.value * 2)
       // Send the current mode of operation to the chip, once it is connencted
       writeToChar( withCharacteristic: front_Desired_Temp_Characteristic!, withValue: Data([UInt8(frontDesiredTemp)]))
     }
@@ -122,7 +122,7 @@ class HRMViewController: UIViewController {
       backDesiredTempLabel.text = "\(backDesiredTempStepper.value)°C"
       
       // REQUIRED TO MULTIPLY BY 2 TO BE ABLE TO SEND AS INTEGERS. Steper step is 0.5.
-      backDesiredTemp = UInt8(backDesiredTempStepper.value) * 2
+      backDesiredTemp = UInt8(backDesiredTempStepper.value * 2)
        // Send the current mode of operation to the chip, once it is connencted
        writeToChar( withCharacteristic: back_Desired_Temp_Characteristic!, withValue: Data([UInt8(backDesiredTemp)]))
     }
@@ -179,14 +179,21 @@ class HRMViewController: UIViewController {
     @IBAction func dataRecordButtonPushed(_ sender: UIButton) {
       // If current button state is "Record" AND chip is connected, update dataRecordingEnable
       if ((dataRecordButton.titleLabel!.text == "Record") && (isRecording_Characteristic != nil)){
-        dataRecordingEnable = 1
-
-        writeToChar( withCharacteristic: isRecording_Characteristic!, withValue: Data([UInt8(dataRecordingEnable)]))
-        dataRecordButton.setTitle("Stop", for: .normal)
+          //If Filed Name Field is EMPTY or containt USED name, then give an alert
+          if  (fileNameTextField.backgroundColor == .systemRed){
+            createAlert (title:"File name empty", message:"Create the file name for the next experiment")
+          }else if (fileNameTextField.textColor == .systemRed) {
+            createAlert (title:"Old file name", message:"Change the file name for the next experiment")
+          }else{  // If file name is suitable, Enable data recording and send flag to the peripheral
+            dataRecordingEnable = 1
+            writeToChar( withCharacteristic: isRecording_Characteristic!, withValue: Data([UInt8(dataRecordingEnable)]))
+            // Change the button titile to "Stop"
+            dataRecordButton.setTitle("Stop", for: .normal)
+        }
       }
       else if ((dataRecordButton.titleLabel!.text == "Stop") && (isRecording_Characteristic != nil)){
         // Change the fileName text color in textField to red TO REMIND TO CHANGE THE NAME FOR THE NEXT EXPRIMENT
-        fileNameTextField.textColor = .red
+        fileNameTextField.textColor = .systemRed
         // Changing button title back to "Record"
         dataRecordButton.setTitle("Record", for: .normal)
         
@@ -229,7 +236,7 @@ class HRMViewController: UIViewController {
       // Note, .trimmingCharacters(in: .whitespacesAndNewlines) removes all spaces from string.
       // Hence, the if statement won't consider spaces as charaters
       if fileNameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
-          fileNameTextField.backgroundColor = .red
+          fileNameTextField.backgroundColor = .systemRed
         }
     }
     // This action is required to hide keyboard by pressing "return". Yes, it is empty. I also have no idea why it works.
@@ -299,6 +306,9 @@ class HRMViewController: UIViewController {
     // This gesture recognizer is nessesary to detect the tap and hide the keyboard when editing text fields
     view.addGestureRecognizer(tap)
     
+    // Make the File Name Text Field red, as it is EMPTY at the startup
+    fileNameTextField.backgroundColor = .systemRed
+    
     // Disable sliders at at sart-up, since automatic mode is defeault at start-up
     frontHeatSlider.isEnabled = false
     backHeatSlider.isEnabled = false
@@ -315,6 +325,8 @@ class HRMViewController: UIViewController {
     // Update the desired temperature labels with stepper values
     frontDesiredTempLabel.text = "\(frontDesiredTempStepper.value)°C"
     backDesiredTempLabel.text = "\(backDesiredTempStepper.value)°C"
+    
+    
     
 
 
@@ -364,6 +376,19 @@ class HRMViewController: UIViewController {
           print("\(error)")
       }
       print(path ?? "not found")
+  }
+  
+  func createAlert (title:String, message:String)
+  {
+    let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+      
+      //CREATING ON BUTTON
+    alert.addAction(UIAlertAction(title: "Alright, I get it", style: UIAlertAction.Style.destructive, handler: { (action) in
+          alert.dismiss(animated: true, completion: nil)
+          print ("Alright, I get it")
+      }))
+
+      self.present(alert, animated: true, completion: nil)
   }
   
 }  // END OF: class HRMViewController: UIViewController {}
@@ -447,7 +472,7 @@ extension HRMViewController: CBCentralManagerDelegate {
     if dataRecordButton.titleLabel!.text == "Stop"{
       
       // Change the fileName text color in textField to red TO REMIND TO CHANGE THE NAME FOR THE NEXT EXPRIMENT
-      fileNameTextField.textColor = .red
+      fileNameTextField.textColor = .systemRed
       // Changing button title back to "Record"
       dataRecordButton.setTitle("Record", for: .normal)
       
@@ -530,7 +555,7 @@ extension HRMViewController: CBCentralManagerDelegate {
           }
         
           // REQUIRED TO MULTIPLY BY 2 TO BE ABLE TO SEND AS INTEGERS. Steper step is 0.5.
-          frontDesiredTemp = UInt8(frontDesiredTempStepper.value)  * 2
+          frontDesiredTemp = UInt8(frontDesiredTempStepper.value * 2)
           // Send the current mode of operation to the chip, once it is connencted
           writeToChar( withCharacteristic: front_Desired_Temp_Characteristic!, withValue: Data([UInt8(frontDesiredTemp)]))
        }else if characteristic.uuid == back_Desired_Temp_CharacteristicCBUUID {
@@ -542,7 +567,7 @@ extension HRMViewController: CBCentralManagerDelegate {
           }
         
           // REQUIRED TO MULTIPLY BY 2 TO BE ABLE TO SEND AS INTEGERS. Steper step is 0.5.
-          backDesiredTemp = UInt8(backDesiredTempStepper.value)  * 2
+          backDesiredTemp = UInt8(backDesiredTempStepper.value * 2) 
           // Send the current mode of operation to the chip, once it is connencted
           writeToChar( withCharacteristic: back_Desired_Temp_Characteristic!, withValue: Data([UInt8(backDesiredTemp)]))
        }

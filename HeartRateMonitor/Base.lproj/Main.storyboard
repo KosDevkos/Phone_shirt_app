@@ -443,9 +443,9 @@
                                                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="type here" textAlignment="center" minimumFontSize="17" id="jlm-d4-tw1">
                                                                 <rect key="frame" x="0.0" y="61" width="273" height="34"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                                <color key="backgroundColor" red="1" green="0.14913141730000001" blue="0.16323309080000001" alpha="0.70283818490000005" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                <color key="backgroundColor" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                                <textInputTraits key="textInputTraits"/>
+                                                                <textInputTraits key="textInputTraits" autocorrectionType="no"/>
                                                                 <connections>
                                                                     <action selector="exitOnReturnFileNameTextField:" destination="BYZ-38-t0r" eventType="editingDidEndOnExit" id="EMu-bj-k1a"/>
                                                                     <action selector="startedEditingFileNameTextFiled:" destination="BYZ-38-t0r" eventType="editingChanged" id="mgB-5O-lJd"/>
