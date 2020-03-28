@@ -40,6 +40,8 @@ class CsvFile: NSObject {
     var ambBackTemp: String = ""
     var dutyCycleFront: String = ""
     var dutyCycleBack: String = ""
+    var frontError: String = "-"
+    var backError: String = "-"
 }
 
 let OTACBUUID = CBUUID(string: "1D14D6EE-FD63-4FA1-BFA4-8F47B42119F0")
@@ -263,6 +265,12 @@ class HRMViewController: UIViewController {
   var frontDesiredTemp: UInt8 = 0;
   var backDesiredTemp: UInt8 = 0;
 
+  var ambient_t_VDD: Double = -1;
+  var ambient_t_GND: Double = -1;
+  var object_t_VDD: Double = -1;
+  var object_t_GND: Double = -1;
+
+
 
   
   
@@ -275,6 +283,9 @@ class HRMViewController: UIViewController {
   var ambBackTemp: String = "0"
   var dutyCycleFront: String = "0"
   var dutyCycleBack: String = "0"
+  var frontError: String = "0"
+  var backError: String = "0"
+  
   
   
 
@@ -332,10 +343,10 @@ class HRMViewController: UIViewController {
           fileName = "\(fileNameTextField.text!).csv"
       }
       let path = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
-      var csvText = "time,objFrontTemp,objBackTemp,ambFrontTemp,ambBackTemp,dutyCycleFront,dutyCycleBack\n"
+      var csvText = "Time (ms),Front Object Temperature (°C),Back Object Temperature (°C),Front Ambient Temperature (°C),Back Ambient Temperature (°C),Front Duty Cycle (%),Back Duty Cycle (%),Front PID Error (°C),Back PID Error (°C)\n"
 
       for csvFile in csvFileArr {
-          let newLine = "\(csvFile.time),\(csvFile.objFrontTemp),\(csvFile.objBackTemp),\(csvFile.ambFrontTemp),\(csvFile.ambBackTemp),\(csvFile.dutyCycleFront),\(csvFile.dutyCycleBack)\n"
+          let newLine = "\(csvFile.time),\(csvFile.objFrontTemp),\(csvFile.objBackTemp),\(csvFile.ambFrontTemp),\(csvFile.ambBackTemp),\(csvFile.dutyCycleFront),\(csvFile.dutyCycleBack),\(csvFile.frontError),\(csvFile.backError)\n"
           csvText.append(newLine)
       }
       do {
@@ -568,35 +579,39 @@ extension HRMViewController: CBCentralManagerDelegate {
           csvFile.ambBackTemp = ambBackTemp
           csvFile.dutyCycleFront = dutyCycleFront
           csvFile.dutyCycleBack = dutyCycleBack
+          if modeOfOperation == 0 {
+            csvFile.frontError = String(frontDesiredTempStepper.value - object_t_VDD)
+            csvFile.backError = String(backDesiredTempStepper.value - object_t_GND)
+          }
           // Appending that new variable to the array
           csvFileArr.append(csvFile!)
         }
         print("timeStamp is \(timeStamp)")
     case ambient_VDD_CharacteristicCBUUID:
-      let ambient_t_VDD = GetTemperature(from: characteristic)
+      ambient_t_VDD = GetTemperature(from: characteristic)
       // updating a label on the screen
       frontAmbientTemp.text = "\(ambient_t_VDD)°C"
       // updating a global variable for later use in CSV
-      ambFrontTemp = ambient_t_VDD
+      ambFrontTemp = "\(ambient_t_VDD)"
     case object_VDD_CharacteristicCBUUID:
-      let object_t_VDD = GetTemperature(from: characteristic)
+      object_t_VDD = GetTemperature(from: characteristic)
       // updating a label on the screen
       frontObjectTemp.text = "\(object_t_VDD)°C"
       // updating a global variable for later use in CSV
-      objFrontTemp = object_t_VDD
+      objFrontTemp = "\(object_t_VDD)"
       print("obje front is \(objFrontTemp)")
     case ambient_GND_CharacteristicCBUUID:
-      let ambient_t_GND = GetTemperature(from: characteristic)
+      ambient_t_GND = GetTemperature(from: characteristic)
       // updating a label on the screen
       backAmbientTemp.text = "\(ambient_t_GND)°C"
       // updating a global variable for later use in CSV
-      ambBackTemp = ambient_t_GND
+      ambBackTemp = "\(ambient_t_GND)"
     case object_GND_CharacteristicCBUUID:
-      let object_t_GND = GetTemperature(from: characteristic)
+      object_t_GND = GetTemperature(from: characteristic)
       // updating a label on the screen
       backObjectTemp.text = "\(object_t_GND)°C"
       // updating a global variable for later use in CSV
-      objBackTemp = object_t_GND
+      objBackTemp = "\(object_t_GND)"
     case Front_TR_PWM_IN_CharacteristicCBUUID:
       let front_TR_PWM = GetDutyCycle(from: characteristic)
       // updating a label on the screen
@@ -617,10 +632,10 @@ extension HRMViewController: CBCentralManagerDelegate {
 
 
   
-  
+// !!! MODIFIED
 // Fuction handles and encodes teperature data received from an updated charasteristic
-  private func GetTemperature(from characteristic: CBCharacteristic) -> String {
-    guard let characteristicData = characteristic.value else { return "error" }
+  private func GetTemperature(from characteristic: CBCharacteristic) -> Double {
+    guard let characteristicData = characteristic.value else { return -1 }
     let byteArray = [UInt8](characteristicData)
 
     // !!! Temperature might be negative, consider using Int8 instead UInt8 for MSB
@@ -628,9 +643,10 @@ extension HRMViewController: CBCentralManagerDelegate {
     let LSB:UInt8 = UInt8(byteArray[1])  // covert single array value LSB byte to usigned integer
     let decimalPoints:UInt8 = UInt8(byteArray[2]) // gets received decimal point bits
     let integer:Int16 = Int16( (MSB << 8) | LSB)  // megres MBS and LBS into a single integer
-    let resultString:String = "\(String(integer)).\(String(decimalPoints))" //conv interger to string
+    let float:Double = Double(integer) + Double(decimalPoints)/100
+    //let resultString:String = "\(String(integer)).\(String(decimalPoints))" //conv interger to string
 
-    return resultString
+    return float
   }
   
     // Fuction handles and encodes Duty Cycle data received from an updated charasteristic
