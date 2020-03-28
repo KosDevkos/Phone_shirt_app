@@ -53,6 +53,10 @@ let Front_TR_PWM_IN_CharacteristicCBUUID = CBUUID(string: "3d586659-fd18-43c7-88
 let Back_TR_PWM_IN_CharacteristicCBUUID = CBUUID(string: "c7bd8529-02ff-481f-a8bc-5b5c34357bc2")
 let Front_TR_PWM_OUT_CharacteristicCBUUID = CBUUID(string: "f79f7794-bfd5-455d-a1ae-b97d4b17774a")
 let Back_TR_PWM_OUT_CharacteristicCBUUID = CBUUID(string: "8eb124d6-afaf-4b75-a83f-a14b61b241a4")
+let front_Desired_Temp_CharacteristicCBUUID = CBUUID(string: "ebdc00cb-c95e-4d95-a89f-7efaad63b02d")
+let back_Desired_Temp_CharacteristicCBUUID = CBUUID(string: "30507bca-5d14-4423-a1ca-405a9b5e6fa0")
+
+
 
 let TimeStamp_CharacteristicCBUUID = CBUUID(string: "09dcd516-9e99-46bb-82b6-460838ae7c83")
 let ModeOfOperation_CharacteristicCBUUID = CBUUID(string: "3e26de8c-9fdd-4b39-8b48-a93b90c0a93f")
@@ -65,6 +69,12 @@ private var Back_TR_PWM_OUT_Characteristic: CBCharacteristic?
 
 private var ModeOfOperation_Characteristic: CBCharacteristic?
 private var isRecording_Characteristic: CBCharacteristic?
+
+private var front_Desired_Temp_Characteristic: CBCharacteristic?
+private var back_Desired_Temp_Characteristic: CBCharacteristic?
+
+
+
 
 
 /// Variables required to generate CSV file
@@ -92,6 +102,30 @@ class HRMViewController: UIViewController {
     @IBOutlet weak var frontHeatSlider: UISlider!
     @IBOutlet weak var backHeatSlider: UISlider!
     
+    @IBOutlet weak var frontDesiredTempLabel: UILabel!
+    @IBOutlet weak var frontDesiredTempStepper: UIStepper!
+    @IBOutlet weak var backDesiredTempLabel: UILabel!
+    @IBOutlet weak var backDesiredTempStepper: UIStepper!
+    
+    @IBAction func frontDesiredTempStepperChanged(_ sender: UIStepper) {
+      frontDesiredTempLabel.text = "\(frontDesiredTempStepper.value)°C"
+      
+      // REQUIRED TO MULTIPLY BY 2 TO BE ABLE TO SEND AS INTEGERS. Steper step is 0.5.
+      frontDesiredTemp = UInt8(frontDesiredTempStepper.value)  * 2
+      // Send the current mode of operation to the chip, once it is connencted
+      writeToChar( withCharacteristic: front_Desired_Temp_Characteristic!, withValue: Data([UInt8(frontDesiredTemp)]))
+    }
+    
+    @IBAction func backDesiredTempStepperChanged(_ sender: UIStepper) {
+      backDesiredTempLabel.text = "\(backDesiredTempStepper.value)°C"
+      
+      // REQUIRED TO MULTIPLY BY 2 TO BE ABLE TO SEND AS INTEGERS. Steper step is 0.5.
+      backDesiredTemp = UInt8(backDesiredTempStepper.value) * 2
+       // Send the current mode of operation to the chip, once it is connencted
+       writeToChar( withCharacteristic: back_Desired_Temp_Characteristic!, withValue: Data([UInt8(backDesiredTemp)]))
+    }
+    
+    
     // Action that triggers when mode switch has changed position
     @IBAction func modeChanged(_ sender: UISegmentedControl) {
         // Switch statement handles all possible modes of operation
@@ -107,6 +141,11 @@ class HRMViewController: UIViewController {
               // then sliders are handeled in a different place
               frontHeatSlider.isEnabled = false
               backHeatSlider.isEnabled = false
+              // Activate the front and back desired temperature stepper
+              frontDesiredTempStepper.isEnabled = true
+              backDesiredTempStepper.isEnabled = true
+              frontDesiredTempLabel.textColor = .black
+              backDesiredTempLabel.textColor = .black
             }
         case 1: // Switched to manual mode
             print("manual mode Selected")
@@ -117,6 +156,12 @@ class HRMViewController: UIViewController {
               // Enable sliders
               frontHeatSlider.isEnabled = true
               backHeatSlider.isEnabled = true
+              // Disactivate the front and back desired temperature stepper
+              frontDesiredTempStepper.isEnabled = false
+              backDesiredTempStepper.isEnabled = false
+              frontDesiredTempLabel.textColor = .opaqueSeparator
+              backDesiredTempLabel.textColor = .opaqueSeparator
+
               // If switched to manual, send the current value of sliders
               if ((Front_TR_PWM_OUT_Characteristic != nil) && (Back_TR_PWM_OUT_Characteristic != nil)){
                 writeToChar( withCharacteristic: Front_TR_PWM_OUT_Characteristic!, withValue: Data([UInt8(frontHeatSlider.value)]))
@@ -215,6 +260,12 @@ class HRMViewController: UIViewController {
   var modeOfOperation: UInt8 = 0
   
   
+  var frontDesiredTemp: UInt8 = 0;
+  var backDesiredTemp: UInt8 = 0;
+
+
+  
+  
   
   // Variables for CSV data
   var timeStamp: String = "0"
@@ -241,6 +292,19 @@ class HRMViewController: UIViewController {
     frontHeatSlider.isEnabled = false
     backHeatSlider.isEnabled = false
     modeSwitch.isEnabled = false
+
+    // Enable desired temperature stepper as automatic mode is defeault at start-up
+    frontDesiredTempStepper.isEnabled = true
+    backDesiredTempStepper.isEnabled = true
+    frontDesiredTempLabel.textColor = .black
+    backDesiredTempLabel.textColor = .black
+    // Set starting desired temperature values on stepper
+    frontDesiredTempStepper.value = 32
+    backDesiredTempStepper.value = 32
+    // Update the desired temperature labels with stepper values
+    frontDesiredTempLabel.text = "\(frontDesiredTempStepper.value)°C"
+    backDesiredTempLabel.text = "\(backDesiredTempStepper.value)°C"
+    
 
 
     // This manager will initiate BLE central manager
@@ -362,6 +426,10 @@ extension HRMViewController: CBCentralManagerDelegate {
     frontHeatSlider.isEnabled = false
     backHeatSlider.isEnabled = false
     modeSwitch.isEnabled = false
+    // Disactivate the front desired temperature stepper
+    frontDesiredTempStepper.isEnabled = false
+    // Disactivate the front desired temperature stepper
+    backDesiredTempStepper.isEnabled = false
     dataRecordButton.setTitleColor(.opaqueSeparator, for: .normal)
     
     // If data is recording, finish recording and export CSV
@@ -441,7 +509,33 @@ extension HRMViewController: CBCentralManagerDelegate {
           modeSwitch.isEnabled = true
           // Send the current mode of operation to the chip, once it is connencted
           writeToChar( withCharacteristic: ModeOfOperation_Characteristic!, withValue: Data([UInt8(modeOfOperation)]))
+       }else if characteristic.uuid == front_Desired_Temp_CharacteristicCBUUID {
+          // Set the characteristic
+          front_Desired_Temp_Characteristic = characteristic
+
+          if modeOfOperation == 0 {
+            // Disactivate the front desired temperature stepper
+            frontDesiredTempStepper.isEnabled = true
+          }
+        
+          // REQUIRED TO MULTIPLY BY 2 TO BE ABLE TO SEND AS INTEGERS. Steper step is 0.5.
+          frontDesiredTemp = UInt8(frontDesiredTempStepper.value)  * 2
+          // Send the current mode of operation to the chip, once it is connencted
+          writeToChar( withCharacteristic: front_Desired_Temp_Characteristic!, withValue: Data([UInt8(frontDesiredTemp)]))
+       }else if characteristic.uuid == back_Desired_Temp_CharacteristicCBUUID {
+          // Set the characteristic
+          back_Desired_Temp_Characteristic = characteristic
+        if modeOfOperation == 0 {
+            // Disactivate the front desired temperature stepper
+            backDesiredTempStepper.isEnabled = true
+          }
+        
+          // REQUIRED TO MULTIPLY BY 2 TO BE ABLE TO SEND AS INTEGERS. Steper step is 0.5.
+          backDesiredTemp = UInt8(backDesiredTempStepper.value)  * 2
+          // Send the current mode of operation to the chip, once it is connencted
+          writeToChar( withCharacteristic: back_Desired_Temp_Characteristic!, withValue: Data([UInt8(backDesiredTemp)]))
        }
+      
       
     }
     
@@ -481,38 +575,38 @@ extension HRMViewController: CBCentralManagerDelegate {
     case ambient_VDD_CharacteristicCBUUID:
       let ambient_t_VDD = GetTemperature(from: characteristic)
       // updating a label on the screen
-      frontAmbientTemp.text = ambient_t_VDD
+      frontAmbientTemp.text = "\(ambient_t_VDD)°C"
       // updating a global variable for later use in CSV
       ambFrontTemp = ambient_t_VDD
     case object_VDD_CharacteristicCBUUID:
       let object_t_VDD = GetTemperature(from: characteristic)
       // updating a label on the screen
-      frontObjectTemp.text = object_t_VDD
+      frontObjectTemp.text = "\(object_t_VDD)°C"
       // updating a global variable for later use in CSV
       objFrontTemp = object_t_VDD
       print("obje front is \(objFrontTemp)")
     case ambient_GND_CharacteristicCBUUID:
       let ambient_t_GND = GetTemperature(from: characteristic)
       // updating a label on the screen
-      backAmbientTemp.text = ambient_t_GND
+      backAmbientTemp.text = "\(ambient_t_GND)°C"
       // updating a global variable for later use in CSV
       ambBackTemp = ambient_t_GND
     case object_GND_CharacteristicCBUUID:
       let object_t_GND = GetTemperature(from: characteristic)
       // updating a label on the screen
-      backObjectTemp.text = object_t_GND
+      backObjectTemp.text = "\(object_t_GND)°C"
       // updating a global variable for later use in CSV
       objBackTemp = object_t_GND
     case Front_TR_PWM_IN_CharacteristicCBUUID:
       let front_TR_PWM = GetDutyCycle(from: characteristic)
       // updating a label on the screen
-      frontDutyCycle.text = front_TR_PWM
+      frontDutyCycle.text = "\(front_TR_PWM)%"
       // updating a global variable for later use in CSV
       dutyCycleFront = front_TR_PWM
     case Back_TR_PWM_IN_CharacteristicCBUUID:
       let back_TR_PWM = GetDutyCycle(from: characteristic)
       // updating a label on the screen
-      backDutyCycle.text = back_TR_PWM
+      backDutyCycle.text = "\(back_TR_PWM)%"
       // updating a global variable for later use in CSV
       dutyCycleBack = back_TR_PWM
       print("back duty is \(dutyCycleBack)")
