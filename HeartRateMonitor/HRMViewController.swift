@@ -58,11 +58,16 @@ let Back_TR_PWM_OUT_CharacteristicCBUUID = CBUUID(string: "8eb124d6-afaf-4b75-a8
 let front_Desired_Temp_CharacteristicCBUUID = CBUUID(string: "ebdc00cb-c95e-4d95-a89f-7efaad63b02d")
 let back_Desired_Temp_CharacteristicCBUUID = CBUUID(string: "30507bca-5d14-4423-a1ca-405a9b5e6fa0")
 
-
-
 let TimeStamp_CharacteristicCBUUID = CBUUID(string: "09dcd516-9e99-46bb-82b6-460838ae7c83")
 let ModeOfOperation_CharacteristicCBUUID = CBUUID(string: "3e26de8c-9fdd-4b39-8b48-a93b90c0a93f")
 let isRecording_CharacteristicCBUUID = CBUUID(string: "84a3a9a6-04d0-440a-ad72-1395572d8924")
+
+let PforPID_CharacteristicCBUUID = CBUUID(string: "e3195e99-5303-4156-b9ab-1d5a0a5b4ea2")
+let IforPID_CharacteristicCBUUID = CBUUID(string: "ed06abc1-b683-4014-a29b-a4b7eee22642")
+let DforPID_CharacteristicCBUUID = CBUUID(string: "b07e67cd-13a3-4006-bd9a-a0de36565f87")
+
+
+
 
 
 /// Variables used to store detected characteristics in the required format for buletooth "write without responce" action
@@ -74,6 +79,14 @@ private var isRecording_Characteristic: CBCharacteristic?
 
 private var front_Desired_Temp_Characteristic: CBCharacteristic?
 private var back_Desired_Temp_Characteristic: CBCharacteristic?
+
+private var PforPID_Characteristic: CBCharacteristic?
+private var IforPID_Characteristic: CBCharacteristic?
+private var DforPID_Characteristic: CBCharacteristic?
+
+
+
+
 
 
 
@@ -103,6 +116,15 @@ class HRMViewController: UIViewController {
     @IBOutlet weak var modeSwitch: UISegmentedControl!
     @IBOutlet weak var frontHeatSlider: UISlider!
     @IBOutlet weak var backHeatSlider: UISlider!
+    
+    @IBOutlet weak var PIDSliderP: UISlider!
+    @IBOutlet weak var PIDSliderI: UISlider!
+    @IBOutlet weak var PIDSliderD: UISlider!
+    @IBOutlet weak var PIDSliderP_Label: UILabel!
+    @IBOutlet weak var PIDSliderI_Label: UILabel!
+    @IBOutlet weak var PIDSliderD_Label: UILabel!
+    
+    
     
     @IBOutlet weak var frontDesiredTempLabel: UILabel!
     @IBOutlet weak var frontDesiredTempStepper: UIStepper!
@@ -146,6 +168,9 @@ class HRMViewController: UIViewController {
               // Activate the front and back desired temperature stepper
               frontDesiredTempStepper.isEnabled = true
               backDesiredTempStepper.isEnabled = true
+              PIDSliderP.isEnabled = true
+              PIDSliderI.isEnabled = true
+              PIDSliderD.isEnabled = true
               frontDesiredTempLabel.textColor = .black
               backDesiredTempLabel.textColor = .black
             }
@@ -161,6 +186,9 @@ class HRMViewController: UIViewController {
               // Disactivate the front and back desired temperature stepper
               frontDesiredTempStepper.isEnabled = false
               backDesiredTempStepper.isEnabled = false
+              PIDSliderP.isEnabled = false
+              PIDSliderI.isEnabled = false
+              PIDSliderD.isEnabled = false
               frontDesiredTempLabel.textColor = .opaqueSeparator
               backDesiredTempLabel.textColor = .opaqueSeparator
 
@@ -225,6 +253,45 @@ class HRMViewController: UIViewController {
         }
       }
     }
+    
+    @IBAction func PIDSliderP_DidChange(_ sender: UISlider) {
+      PforPID = UInt8(PIDSliderP.value)
+      PIDSliderP_Label.text = String(PforPID)
+      PIDSliderP.value = Float(PforPID)
+      print("PforPID is: \(PforPID)")
+      if (PforPID_Characteristic != nil) {
+        print("I'm sending PforPID: \(PforPID)")
+        writeToChar( withCharacteristic: PforPID_Characteristic!, withValue: Data([UInt8(PforPID)]))
+      }
+        
+    }
+    @IBAction func PIDSliderI_DidChange(_ sender: UISlider) {
+      IforPID = UInt8(PIDSliderI.value)
+      // HAVE TO DIVIDE BY 5
+      PIDSliderI_Label.text = String(Float(IforPID) / 5)
+      PIDSliderI.value = Float(IforPID)
+      print("IforPID is: \(IforPID)")
+      if (IforPID_Characteristic != nil) {
+        print("I'm sending IforPID: \(IforPID)")
+        writeToChar( withCharacteristic: IforPID_Characteristic!, withValue: Data([UInt8(IforPID)]))
+      }
+      
+    }
+    @IBAction func PIDSliderD_DidChange(_ sender: UISlider) {
+      DforPID = UInt8(PIDSliderD.value)
+      // HAVE TO DIVIDE BY 20
+      PIDSliderD_Label.text = String(Float(DforPID) / 20)
+      PIDSliderD.value = Float(DforPID)
+      print("DforPID is: \(DforPID)")
+      if (DforPID_Characteristic != nil) {
+        print("I'm sending DforPID: \(DforPID)")
+        writeToChar( withCharacteristic: DforPID_Characteristic!, withValue: Data([UInt8(DforPID)]))
+      }
+        
+    }
+    
+    
+    
     // This action is required to change the color of file name in the text filed back to black
     // after user did change the name of the previous experiment to a new one
     // !!! Consider blocking alert instad of red higligting!
@@ -271,6 +338,11 @@ class HRMViewController: UIViewController {
   
   var frontDesiredTemp: UInt8 = 0;
   var backDesiredTemp: UInt8 = 0;
+  
+  var PforPID: UInt8 = 0;
+  var IforPID: UInt8 = 0;
+  var DforPID: UInt8 = 0;
+
 
   var ambient_t_VDD: Double = -1;
   var ambient_t_GND: Double = -1;
@@ -317,6 +389,7 @@ class HRMViewController: UIViewController {
     // Enable desired temperature stepper as automatic mode is defeault at start-up
     frontDesiredTempStepper.isEnabled = true
     backDesiredTempStepper.isEnabled = true
+    
     frontDesiredTempLabel.textColor = .black
     backDesiredTempLabel.textColor = .black
     // Set starting desired temperature values on stepper
@@ -466,6 +539,9 @@ extension HRMViewController: CBCentralManagerDelegate {
     frontDesiredTempStepper.isEnabled = false
     // Disactivate the front desired temperature stepper
     backDesiredTempStepper.isEnabled = false
+    PIDSliderP.isEnabled = true
+    PIDSliderI.isEnabled = true
+    PIDSliderD.isEnabled = true
     dataRecordButton.setTitleColor(.opaqueSeparator, for: .normal)
     
     // If data is recording, finish recording and export CSV
@@ -570,7 +646,46 @@ extension HRMViewController: CBCentralManagerDelegate {
           backDesiredTemp = UInt8(backDesiredTempStepper.value * 2) 
           // Send the current mode of operation to the chip, once it is connencted
           writeToChar( withCharacteristic: back_Desired_Temp_Characteristic!, withValue: Data([UInt8(backDesiredTemp)]))
+       }else if characteristic.uuid == PforPID_CharacteristicCBUUID {
+          // Set the characteristic
+          PforPID_Characteristic = characteristic
+        if modeOfOperation == 0 {
+            // Disactivate the PID D Slider
+            PIDSliderP.isEnabled = true
+          }
+          PforPID = UInt8(PIDSliderP.value)
+          // NOTE, Scaling down the received range (0-100) to (0-100) by dividing by 1
+          PIDSliderP_Label.text = String(Float(PforPID) / 1)
+          // Send the current mode of operation to the chip, once it is connencted
+          writeToChar( withCharacteristic: PforPID_Characteristic!, withValue: Data([UInt8(PforPID)]))
+       }else if characteristic.uuid == IforPID_CharacteristicCBUUID {
+          // Set the characteristic
+          IforPID_Characteristic = characteristic
+        if modeOfOperation == 0 {
+            // Disactivate the PID D Slider
+            PIDSliderI.isEnabled = true
+          }
+          IforPID = UInt8(PIDSliderI.value)
+          // NOTE, Scaling down the received range (0-100) to (0-20) by dividing by 5
+          PIDSliderI_Label.text = String(Float(IforPID) / 5)
+          // Send the current mode of operation to the chip, once it is connencted
+          writeToChar( withCharacteristic: IforPID_Characteristic!, withValue: Data([UInt8(IforPID)]))
+       }else if characteristic.uuid == DforPID_CharacteristicCBUUID {
+          // Set the characteristic
+          DforPID_Characteristic = characteristic
+        if modeOfOperation == 0 {
+            // Disactivate the PID D Slider
+            PIDSliderD.isEnabled = true
+          }
+          DforPID = UInt8(PIDSliderD.value)
+          // NOTE, Scaling down the received range (0-100) to (0-5) by dividing by 20
+          PIDSliderD_Label.text = String(Float(DforPID) / 20)
+          // Send the current mode of operation to the chip, once it is connencted
+          writeToChar( withCharacteristic: DforPID_Characteristic!, withValue: Data([UInt8(DforPID)]))
        }
+      
+      
+      
       
       
     }
