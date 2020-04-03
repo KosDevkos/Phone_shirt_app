@@ -134,8 +134,12 @@ class HRMViewController: UIViewController {
     @IBOutlet weak var PIDSliderI_Label: UILabel!
     @IBOutlet weak var PIDSliderD_Label: UILabel!
     
-    
-    
+    @IBOutlet weak var frontP_Label: UILabel!
+    @IBOutlet weak var frontI_Label: UILabel!
+    @IBOutlet weak var frontD_Label: UILabel!
+    @IBOutlet weak var backP_Label: UILabel!
+    @IBOutlet weak var backI_Label: UILabel!
+    @IBOutlet weak var backD_Label: UILabel!
     
     
     @IBOutlet weak var frontDesiredTempLabel: UILabel!
@@ -825,6 +829,13 @@ extension HRMViewController: CBCentralManagerDelegate {
     case receivePID_CharacteristicCBUUID:
       GetReceivedPID(frontProportional: &frontProportional, frontIntegral: &frontIntegral, frontDerivative: &frontDerivative, backProportional: &backProportional, backIntegral: &backIntegral, backDerivative: &backDerivative, from: characteristic)
       
+      frontP_Label.text = frontProportional
+      frontI_Label.text = frontIntegral
+      frontD_Label.text = frontDerivative
+      backP_Label.text = backProportional
+      backI_Label.text = backIntegral
+      backD_Label.text = backDerivative
+      
     default:
       print("Unhandled Characteristic UUID: \(characteristic.uuid)")
     }
@@ -877,14 +888,16 @@ extension HRMViewController: CBCentralManagerDelegate {
     
     private func GetReceivedPID(frontProportional: inout String, frontIntegral: inout String, frontDerivative: inout String, backProportional: inout String, backIntegral: inout String, backDerivative: inout String, from characteristic: CBCharacteristic) -> Void {
       guard let characteristicData = characteristic.value else { return }
-      let byteArray = [UInt8](characteristicData)
       
-      frontProportional = String(UInt8(byteArray[0]))
-      frontIntegral = String(UInt8(byteArray[1]))
-      frontDerivative = String(UInt8(byteArray[2]))
-      backProportional = String(UInt8(byteArray[3]))
-      backIntegral = String(UInt8(byteArray[4]))
-      backDerivative = String(UInt8(byteArray[5]))
+      // The only way to convert "Data" to Int8 format (Normally only UInt8 works)
+      let byteArray: [Int8] = characteristicData.map{Int8(bitPattern: $0)}
+
+      frontProportional = String(Int8(byteArray[0]))
+      frontIntegral = String(Int8(byteArray[1]))
+      frontDerivative = String(Int8(byteArray[2]))
+      backProportional = String(Int8(byteArray[3]))
+      backIntegral = String(Int8(byteArray[4]))
+      backDerivative = String(Int8(byteArray[5]))
   }
     
     

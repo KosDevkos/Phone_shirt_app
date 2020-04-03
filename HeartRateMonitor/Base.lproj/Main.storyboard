@@ -19,10 +19,10 @@
                                 <rect key="frame" x="0.0" y="88" width="414" height="2392"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VQl-IO-0Mz">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="2392"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="2466.5"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="jMv-Nk-fez">
-                                                <rect key="frame" x="0.0" y="24" width="414" height="2318"/>
+                                                <rect key="frame" x="0.0" y="24" width="414" height="2392.5"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Fo1-9W-UaY" userLabel="object T stack">
                                                         <rect key="frame" x="0.0" y="0.0" width="414" height="123"/>
@@ -144,7 +144,7 @@
                                                         </constraints>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="a5V-YA-s5G" userLabel="Duty cycle stack">
-                                                        <rect key="frame" x="0.0" y="430" width="414" height="271"/>
+                                                        <rect key="frame" x="0.0" y="430" width="414" height="252"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zO1-Ht-cxc">
                                                                 <rect key="frame" x="84" y="0.0" width="246" height="41.5"/>
@@ -167,10 +167,10 @@
                                                                 <nil key="highlightedColor"/>
                                                             </label>
                                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="firstBaseline" spacing="70" translatesAutoresizingMaskIntoConstraints="NO" id="LjD-s1-X7e">
-                                                                <rect key="frame" x="69" y="96.5" width="276" height="174.5"/>
+                                                                <rect key="frame" x="69" y="96.5" width="276" height="155.5"/>
                                                                 <subviews>
                                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="BNB-Bl-e6e">
-                                                                        <rect key="frame" x="0.0" y="19" width="103" height="155.5"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="103" height="155.5"/>
                                                                         <subviews>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" text="Front:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nt8-BD-t5J">
                                                                                 <rect key="frame" x="16.5" y="0.0" width="70.5" height="33.5"/>
@@ -243,7 +243,7 @@
                                                                         </subviews>
                                                                     </stackView>
                                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="NJ1-d5-DeW">
-                                                                        <rect key="frame" x="173" y="19" width="103" height="155.5"/>
+                                                                        <rect key="frame" x="173" y="0.0" width="103" height="155.5"/>
                                                                         <subviews>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" text="Back:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="I5J-9Y-kqR">
                                                                                 <rect key="frame" x="18" y="0.0" width="67.5" height="33.5"/>
@@ -324,7 +324,7 @@
                                                         </constraints>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="69m-mP-KrO" userLabel="Mode stack">
-                                                        <rect key="frame" x="74" y="783.5" width="266" height="92"/>
+                                                        <rect key="frame" x="74" y="764.5" width="266" height="92"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cWa-2R-Xbl">
                                                                 <rect key="frame" x="0.0" y="0.0" width="266" height="41"/>
@@ -353,10 +353,10 @@
                                                         </subviews>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="N9o-dj-hdZ" userLabel="Heating lvl stack">
-                                                        <rect key="frame" x="31" y="958" width="352" height="149.5"/>
+                                                        <rect key="frame" x="31" y="939" width="352" height="243"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fhl-IR-Qkn">
-                                                                <rect key="frame" x="0.0" y="0.0" width="352" height="22"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="352" height="36"/>
                                                                 <attributedString key="attributedText">
                                                                     <fragment content="Front heating level">
                                                                         <attributes>
@@ -370,16 +370,16 @@
                                                                 <nil key="highlightedColor"/>
                                                             </label>
                                                             <stackView opaque="NO" contentMode="scaleToFill" spacing="5" baselineRelativeArrangement="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nlb-aL-Rqw">
-                                                                <rect key="frame" x="0.0" y="42" width="352" height="12.5"/>
+                                                                <rect key="frame" x="0.0" y="56" width="352" height="20.5"/>
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" text="0% " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pgx-Ey-XBe">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="29" height="12.5"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="29" height="20.5"/>
                                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="50" minValue="0.0" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="Jym-4O-ykX" userLabel="Front heating slider">
-                                                                        <rect key="frame" x="32" y="0.0" width="274.5" height="13.5"/>
+                                                                        <rect key="frame" x="32" y="0.0" width="274.5" height="21.5"/>
                                                                         <color key="minimumTrackTintColor" systemColor="systemPinkColor" red="1" green="0.1764705882" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                         <color key="maximumTrackTintColor" systemColor="systemBlueColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                         <color key="thumbTintColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
@@ -388,7 +388,7 @@
                                                                         </connections>
                                                                     </slider>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" text="100%" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jfY-Ug-7pu">
-                                                                        <rect key="frame" x="309.5" y="0.0" width="42.5" height="12.5"/>
+                                                                        <rect key="frame" x="309.5" y="0.0" width="42.5" height="20.5"/>
                                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                         <nil key="highlightedColor"/>
@@ -396,7 +396,7 @@
                                                                 </subviews>
                                                             </stackView>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Ks-rO-lVE">
-                                                                <rect key="frame" x="0.0" y="74.5" width="352" height="22.5"/>
+                                                                <rect key="frame" x="0.0" y="96.5" width="352" height="36"/>
                                                                 <attributedString key="attributedText">
                                                                     <fragment content="Back heating level">
                                                                         <attributes>
@@ -410,20 +410,20 @@
                                                                 <nil key="highlightedColor"/>
                                                             </label>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cv9-ye-eAN">
-                                                                <rect key="frame" x="0.0" y="117" width="352" height="0.0"/>
+                                                                <rect key="frame" x="0.0" y="152.5" width="352" height="50"/>
                                                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                                             </view>
                                                             <stackView opaque="NO" contentMode="scaleToFill" spacing="5" baselineRelativeArrangement="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZMa-9i-Brc">
-                                                                <rect key="frame" x="0.0" y="137" width="352" height="12.5"/>
+                                                                <rect key="frame" x="0.0" y="222.5" width="352" height="20.5"/>
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" text="0% " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7nW-EP-KS6">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="29" height="12.5"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="29" height="20.5"/>
                                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="50" minValue="0.0" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="D8O-vk-XZ8" userLabel="Back heating slider">
-                                                                        <rect key="frame" x="32" y="0.0" width="274.5" height="13.5"/>
+                                                                        <rect key="frame" x="32" y="0.0" width="274.5" height="21.5"/>
                                                                         <color key="minimumTrackTintColor" systemColor="systemPinkColor" red="1" green="0.1764705882" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                         <color key="maximumTrackTintColor" systemColor="systemBlueColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                         <color key="thumbTintColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
@@ -432,7 +432,7 @@
                                                                         </connections>
                                                                     </slider>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" text="100%" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zzM-W0-IGl">
-                                                                        <rect key="frame" x="309.5" y="0.0" width="42.5" height="12.5"/>
+                                                                        <rect key="frame" x="309.5" y="0.0" width="42.5" height="20.5"/>
                                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                         <nil key="highlightedColor"/>
@@ -442,7 +442,7 @@
                                                         </subviews>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="F1W-G5-eEc" userLabel="Desired temperature">
-                                                        <rect key="frame" x="76" y="1190" width="262.5" height="180"/>
+                                                        <rect key="frame" x="76" y="1264.5" width="262.5" height="180"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" layoutMarginsFollowReadableWidth="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m3t-2Q-n30">
                                                                 <rect key="frame" x="0.0" y="0.0" width="262.5" height="36"/>
@@ -540,7 +540,7 @@
                                                         </constraints>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="hgx-BW-m4L" userLabel="PID control">
-                                                        <rect key="frame" x="31" y="1452.5" width="352" height="348"/>
+                                                        <rect key="frame" x="31" y="1527" width="352" height="348"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" layoutMarginsFollowReadableWidth="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bZC-Zq-xJf">
                                                                 <rect key="frame" x="0.0" y="0.0" width="352" height="36"/>
@@ -748,7 +748,7 @@
                                                         </constraints>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="2qe-c2-XaC" userLabel="File record stack">
-                                                        <rect key="frame" x="70.5" y="1883" width="273" height="166"/>
+                                                        <rect key="frame" x="70.5" y="1957.5" width="273" height="166"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="400" translatesAutoresizingMaskIntoConstraints="NO" id="xFA-zN-JAg">
                                                                 <rect key="frame" x="0.0" y="0.0" width="273" height="41"/>
@@ -788,7 +788,7 @@
                                                         </subviews>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="7pL-Rh-6fN" userLabel="Dummy space">
-                                                        <rect key="frame" x="0.0" y="2131.5" width="414" height="186.5"/>
+                                                        <rect key="frame" x="0.0" y="2206" width="414" height="186.5"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="    Illia Kosvin Electronics and Computer Science University of Southampton 2020" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="10" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bLb-li-IYR">
                                                                 <rect key="frame" x="0.0" y="0.0" width="414" height="186.5"/>
@@ -871,19 +871,25 @@
                         <outlet property="PIDSliderP" destination="rCF-Hd-MCe" id="zJ9-BZ-UdA"/>
                         <outlet property="PIDSliderP_Label" destination="Shh-Y9-oF7" id="eS7-Ke-ahs"/>
                         <outlet property="backAmbientTemp" destination="2yQ-i6-6bR" id="nXS-lH-lcJ"/>
+                        <outlet property="backD_Label" destination="cWQ-G0-4Pj" id="uL8-bm-WFs"/>
                         <outlet property="backDesiredTempLabel" destination="28n-m8-Gb0" id="Nu8-QJ-RoA"/>
                         <outlet property="backDesiredTempStepper" destination="Ojb-8w-kS1" id="19R-O1-qAZ"/>
                         <outlet property="backDutyCycle" destination="NFc-Q4-aNZ" id="Kyv-S2-hpH"/>
                         <outlet property="backHeatSlider" destination="D8O-vk-XZ8" id="C0w-dH-mtE"/>
+                        <outlet property="backI_Label" destination="x3H-a9-yT5" id="6vV-Kc-TP4"/>
                         <outlet property="backObjectTemp" destination="odd-Hw-H2V" id="1Ea-6a-LMs"/>
+                        <outlet property="backP_Label" destination="cjz-Hg-jf1" id="adA-4r-HoS"/>
                         <outlet property="dataRecordButton" destination="gZH-Ed-CV8" id="Bus-lf-Bdl"/>
                         <outlet property="fileNameTextField" destination="jlm-d4-tw1" id="hnm-NR-khL"/>
                         <outlet property="frontAmbientTemp" destination="gHF-mY-Rws" id="wxb-RY-ezq"/>
+                        <outlet property="frontD_Label" destination="bfW-cy-Pwg" id="f2m-6f-rCo"/>
                         <outlet property="frontDesiredTempLabel" destination="dvr-2d-iMc" id="Obo-CT-mlb"/>
                         <outlet property="frontDesiredTempStepper" destination="8aP-p5-FhK" id="usP-PG-Onh"/>
                         <outlet property="frontDutyCycle" destination="wxq-X4-4HM" id="TV6-ql-s5V"/>
                         <outlet property="frontHeatSlider" destination="Jym-4O-ykX" id="5jK-gv-aYm"/>
+                        <outlet property="frontI_Label" destination="1Du-kw-H9i" id="YBB-l3-S4G"/>
                         <outlet property="frontObjectTemp" destination="vav-fa-HwA" id="Ylc-M4-CeI"/>
+                        <outlet property="frontP_Label" destination="nU4-ZY-yyA" id="vGf-l8-2xK"/>
                         <outlet property="heatControllerTitle" destination="oM9-J4-V4h" id="qqk-6p-xjz"/>
                         <outlet property="modeSwitch" destination="GWF-Oc-KJN" id="vnG-GG-FvI"/>
                     </connections>
