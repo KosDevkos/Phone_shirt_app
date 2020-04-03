@@ -74,6 +74,8 @@ let PforPID_CharacteristicCBUUID = CBUUID(string: "e3195e99-5303-4156-b9ab-1d5a0
 let IforPID_CharacteristicCBUUID = CBUUID(string: "ed06abc1-b683-4014-a29b-a4b7eee22642")
 let DforPID_CharacteristicCBUUID = CBUUID(string: "b07e67cd-13a3-4006-bd9a-a0de36565f87")
 
+let receivePID_CharacteristicCBUUID = CBUUID(string: "3074c7a8-283f-4389-a160-0e7587837651")
+
 
 
 
@@ -131,6 +133,8 @@ class HRMViewController: UIViewController {
     @IBOutlet weak var PIDSliderP_Label: UILabel!
     @IBOutlet weak var PIDSliderI_Label: UILabel!
     @IBOutlet weak var PIDSliderD_Label: UILabel!
+    
+    
     
     
     
@@ -299,8 +303,8 @@ class HRMViewController: UIViewController {
       
       PIDSliderD.value = Float(DtoSendPID)
       // DtoSendPID is casted as UInt8 to remove decimals, it is converted back to float to be used in PID
-      // HAVE TO DIVIDE BY 20 to scale DforPID down from 100 to 5
-      DforPID = Float(DtoSendPID) / 20
+      // HAVE TO DIVIDE BY 5 to scale DforPID down from 100 to 20
+      DforPID = Float(DtoSendPID) / 5
               
       PIDSliderD_Label.text = String(DforPID)
 
@@ -384,18 +388,18 @@ class HRMViewController: UIViewController {
   var dutyCycleFront: String = "0"
   var dutyCycleBack: String = "0"
   
-  var frontError: Float = 0
-  var frontProportional: Float = 0
-  var frontIntegral: Float = 0
-  var frontPreviousError: Float = 0
-  var frontDerivative: Float = 0
-  var frontResultingPID: Float = 0
-  var backError: Float = 0
-  var backProportional: Float = 0
-  var backIntegral: Float = 0
-  var backPreviousError: Float = 0
-  var backDerivative: Float = 0
-  var backResultingPID: Float = 0
+  var frontError: String = "0"
+  var frontProportional: String = "0"
+  var frontIntegral: String = "0"
+  var frontPreviousError: String = "0"
+  var frontDerivative: String = "0"
+  var frontResultingPID: String = "0"
+  var backError: String = "0"
+  var backProportional: String = "0"
+  var backIntegral: String = "0"
+  var backPreviousError: String = "0"
+  var backDerivative: String = "0"
+  var backResultingPID: String = "0"
   
   
   
@@ -717,8 +721,8 @@ extension HRMViewController: CBCentralManagerDelegate {
            let DtoSendPID: UInt8 = UInt8(PIDSliderD.value)
            PIDSliderD.value = Float(DtoSendPID)
            // DtoSendPID is casted as UInt8 to remove decimals, it is converted back to float to be used in PID
-           // HAVE TO DIVIDE BY 20 to scale DforPID down from 100 to 5
-           DforPID = Float(DtoSendPID) / 20
+           // HAVE TO DIVIDE BY 5 to scale DforPID down from 100 to 20
+           DforPID = Float(DtoSendPID) / 5
            PIDSliderD_Label.text = String(DforPID)
            writeToChar( withCharacteristic: DforPID_Characteristic!, withValue: Data([DtoSendPID]))
        }
@@ -761,22 +765,20 @@ extension HRMViewController: CBCentralManagerDelegate {
           if modeOfOperation == 0 {
             // This getPID() function will update Proportional, Integral, Derivative and Resulting PID for the Front section
             print(" frontPreviousError is \(frontPreviousError)")
-            GetPID(set_point: Float(frontDesiredTempStepper!.value), object_t: object_t_VDD, p_scalar: PforPID, i_scalar: IforPID, d_scalar: DforPID, proportional: &frontProportional, integral: &frontIntegral, derivative: &frontDerivative, previous_error: &frontPreviousError, resultingPID: &frontResultingPID)
             
             csvFile.frontError = String(format: "%.2f",(frontDesiredTempStepper.value - object_t_VDD))
-            csvFile.frontProportional = String(format: "%.2f",frontProportional)
-            csvFile.frontIntegral = String(format: "%.2f",frontIntegral)
-            csvFile.frontDerivative = String(format: "%.2f",frontDerivative)
-            csvFile.frontResultingPID = String(format: "%.2f",frontResultingPID)
+            csvFile.frontProportional = frontProportional
+            csvFile.frontIntegral = frontIntegral
+            csvFile.frontDerivative = frontDerivative
+            csvFile.frontResultingPID = frontResultingPID
             print(" frontError is \(csvFile.frontError), frontPreviousError is \(frontPreviousError),frontProportional  is \(csvFile.frontProportional),frontIntegral  is \(csvFile.frontIntegral), frontDerivative is \(csvFile.frontDerivative),  frontResultingPID is \(csvFile.frontResultingPID)")
             // This getPID() function will update Proportional, Integral, Derivative and Resulting PID for the Back section
             print(" backPreviousError is \(backPreviousError)")
-            GetPID(set_point: Float(backDesiredTempStepper!.value), object_t: object_t_GND, p_scalar: PforPID, i_scalar: IforPID, d_scalar: DforPID, proportional: &backProportional, integral: &backIntegral, derivative: &backDerivative, previous_error: &backPreviousError, resultingPID: &backResultingPID)
             csvFile.backError = String(format: "%.2f",(backDesiredTempStepper.value - object_t_GND))
-            csvFile.backProportional = String(format: "%.2f",backProportional)
-            csvFile.backIntegral = String(format: "%.2f",backIntegral)
-            csvFile.backDerivative = String(format: "%.2f",backDerivative)
-            csvFile.backResultingPID = String(format: "%.2f",backResultingPID)
+            csvFile.backProportional = backProportional
+            csvFile.backIntegral = backIntegral
+            csvFile.backDerivative = backDerivative
+            csvFile.backResultingPID = backResultingPID
             print(" backError is \(csvFile.backError), backProportional  is \(csvFile.backProportional),backIntegral  is \(csvFile.backIntegral), backDerivative is \(csvFile.backDerivative),  backResultingPID is \(csvFile.backResultingPID)")          }
           // Appending that new variable to the array
           csvFileArr.append(csvFile!)
@@ -820,10 +822,15 @@ extension HRMViewController: CBCentralManagerDelegate {
       // updating a global variable for later use in CSV
       dutyCycleBack = back_TR_PWM
       print("back duty is \(dutyCycleBack)")
+    case receivePID_CharacteristicCBUUID:
+      GetReceivedPID(frontProportional: &frontProportional, frontIntegral: &frontIntegral, frontDerivative: &frontDerivative, backProportional: &backProportional, backIntegral: &backIntegral, backDerivative: &backDerivative, from: characteristic)
+      
     default:
       print("Unhandled Characteristic UUID: \(characteristic.uuid)")
     }
   }
+    
+    
 
 
   
@@ -867,34 +874,21 @@ extension HRMViewController: CBCentralManagerDelegate {
       let resultString:String = "\(String(integer))" //conv interger to string
       return resultString
   }
+    
+    private func GetReceivedPID(frontProportional: inout String, frontIntegral: inout String, frontDerivative: inout String, backProportional: inout String, backIntegral: inout String, backDerivative: inout String, from characteristic: CBCharacteristic) -> Void {
+      guard let characteristicData = characteristic.value else { return }
+      let byteArray = [UInt8](characteristicData)
+      
+      frontProportional = String(UInt8(byteArray[0]))
+      frontIntegral = String(UInt8(byteArray[1]))
+      frontDerivative = String(UInt8(byteArray[2]))
+      backProportional = String(UInt8(byteArray[3]))
+      backIntegral = String(UInt8(byteArray[4]))
+      backDerivative = String(UInt8(byteArray[5]))
+  }
+    
+    
 }
 
-
-private func GetPID(set_point: Float, object_t: Double, p_scalar: Float, i_scalar: Float, d_scalar: Float, proportional: inout Float, integral: inout Float, derivative: inout Float, previous_error: inout Float, resultingPID: inout Float) -> Void{
-
-  let error: Float = set_point - Float(object_t)
-  proportional = error * (p_scalar)
-  // Boundary if statements, as duty cycle can not be over 100 and below 0.
-  // IMPORTANT As uint8_t variable, proportional may overflow. If so, either 0 or 100 is assigned to it
-  if (proportional >  100) {proportional = 100}
-  if (proportional < 0) {proportional = 0}
-
-  // calculate the integral component (summation of past errors * i scalar)
-  integral += error * (i_scalar)
-  if(integral >  100) {integral = 100} // limit wind-up
-  if(integral < 0) {integral = 0}
-
-  // calculate the derivative component (change since previous error * d scalar)
-  derivative = (error - previous_error) * (d_scalar)
-  previous_error = error
-
-  resultingPID = proportional + integral + derivative
-  // Limit
-  // Note, resultingPID is uit8 with max value of 256, so if variables are at their maximum value of 100, resultingPID will overflow.
-  // Hence, the sum is checked in the if statement instead of a value, whihc may overflow.
-  if(proportional + integral + derivative >  100) {resultingPID = 100}
-  if(proportional + integral + derivative < 0) {resultingPID = 0}
-  
-}
 
 
