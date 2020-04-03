@@ -41,7 +41,15 @@ class CsvFile: NSObject {
     var dutyCycleFront: String = ""
     var dutyCycleBack: String = ""
     var frontError: String = "-"
+    var frontProportional: String = "-"
+    var frontIntegral: String = "-"
+    var frontDerivative: String = "-"
+    var frontResultingPID: String = "-"
     var backError: String = "-"
+    var backProportional: String = "-"
+    var backIntegral: String = "-"
+    var backDerivative: String = "-"
+    var backResultingPID: String = "-"
 }
 
 let OTACBUUID = CBUUID(string: "1D14D6EE-FD63-4FA1-BFA4-8F47B42119F0")
@@ -255,37 +263,50 @@ class HRMViewController: UIViewController {
     }
     
     @IBAction func PIDSliderP_DidChange(_ sender: UISlider) {
-      PforPID = UInt8(PIDSliderP.value)
+      let PtoSendPID: UInt8 = UInt8(PIDSliderP.value)
+      
+      PIDSliderP.value = Float(PtoSendPID)
+      // PtoSendPID is casted as UInt8 to remove decimals, it is converted back to float to be used in PID
+      // HAVE TO DIVIDE BY 1 to scale DforPID down from 100 to 100
+      PforPID = Float(PtoSendPID) / 1
+              
       PIDSliderP_Label.text = String(PforPID)
-      PIDSliderP.value = Float(PforPID)
-      print("PforPID is: \(PforPID)")
+
       if (PforPID_Characteristic != nil) {
         print("I'm sending PforPID: \(PforPID)")
-        writeToChar( withCharacteristic: PforPID_Characteristic!, withValue: Data([UInt8(PforPID)]))
+        writeToChar( withCharacteristic: PforPID_Characteristic!, withValue: Data([PtoSendPID]))
       }
         
     }
     @IBAction func PIDSliderI_DidChange(_ sender: UISlider) {
-      IforPID = UInt8(PIDSliderI.value)
-      // HAVE TO DIVIDE BY 5
-      PIDSliderI_Label.text = String(Float(IforPID) / 5)
-      PIDSliderI.value = Float(IforPID)
-      print("IforPID is: \(IforPID)")
+      let ItoSendPID: UInt8 = UInt8(PIDSliderI.value)
+      
+      PIDSliderI.value = Float(ItoSendPID)
+      // ItoSendPID is casted as UInt8 to remove decimals, it is converted back to float to be used in PID
+      // HAVE TO DIVIDE BY 5 to scale IforPID down from 100 to 20
+      IforPID = Float(ItoSendPID) / 5
+              
+      PIDSliderI_Label.text = String(IforPID)
+
       if (IforPID_Characteristic != nil) {
         print("I'm sending IforPID: \(IforPID)")
-        writeToChar( withCharacteristic: IforPID_Characteristic!, withValue: Data([UInt8(IforPID)]))
+        writeToChar( withCharacteristic: IforPID_Characteristic!, withValue: Data([ItoSendPID]))
       }
       
     }
     @IBAction func PIDSliderD_DidChange(_ sender: UISlider) {
-      DforPID = UInt8(PIDSliderD.value)
-      // HAVE TO DIVIDE BY 20
-      PIDSliderD_Label.text = String(Float(DforPID) / 20)
-      PIDSliderD.value = Float(DforPID)
-      print("DforPID is: \(DforPID)")
+      let DtoSendPID: UInt8 = UInt8(PIDSliderD.value)
+      
+      PIDSliderD.value = Float(DtoSendPID)
+      // DtoSendPID is casted as UInt8 to remove decimals, it is converted back to float to be used in PID
+      // HAVE TO DIVIDE BY 20 to scale DforPID down from 100 to 5
+      DforPID = Float(DtoSendPID) / 20
+              
+      PIDSliderD_Label.text = String(DforPID)
+
       if (DforPID_Characteristic != nil) {
         print("I'm sending DforPID: \(DforPID)")
-        writeToChar( withCharacteristic: DforPID_Characteristic!, withValue: Data([UInt8(DforPID)]))
+        writeToChar( withCharacteristic: DforPID_Characteristic!, withValue: Data([DtoSendPID]))
       }
         
     }
@@ -339,9 +360,9 @@ class HRMViewController: UIViewController {
   var frontDesiredTemp: UInt8 = 0;
   var backDesiredTemp: UInt8 = 0;
   
-  var PforPID: UInt8 = 0;
-  var IforPID: UInt8 = 0;
-  var DforPID: UInt8 = 0;
+  var PforPID: Float = 0;
+  var IforPID: Float = 0;
+  var DforPID: Float = 0;
 
 
   var ambient_t_VDD: Double = -1;
@@ -362,8 +383,19 @@ class HRMViewController: UIViewController {
   var ambBackTemp: String = "0"
   var dutyCycleFront: String = "0"
   var dutyCycleBack: String = "0"
-  var frontError: String = "0"
-  var backError: String = "0"
+  
+  var frontError: Float = 0
+  var frontProportional: Float = 0
+  var frontIntegral: Float = 0
+  var frontPreviousError: Float = 0
+  var frontDerivative: Float = 0
+  var frontResultingPID: Float = 0
+  var backError: Float = 0
+  var backProportional: Float = 0
+  var backIntegral: Float = 0
+  var backPreviousError: Float = 0
+  var backDerivative: Float = 0
+  var backResultingPID: Float = 0
   
   
   
@@ -428,10 +460,10 @@ class HRMViewController: UIViewController {
           fileName = "\(fileNameTextField.text!).csv"
       }
       let path = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
-      var csvText = "Time (ms),Front Object Temperature (°C),Back Object Temperature (°C),Front Ambient Temperature (°C),Back Ambient Temperature (°C),Front Duty Cycle (%),Back Duty Cycle (%),Front PID Error (°C),Back PID Error (°C)\n"
+      var csvText = "Time (ms),Front Object Temperature (ºC),Back Object Temperature (ºC),Front Ambient Temperature (ºC),Back Ambient Temperature (ºC),Front Duty Cycle (%),Back Duty Cycle (%),Front PID Error (ºC),Front P,Front I,Front D,Front PID,Back PID Error(ºC),Back P,Back I,Back D,Back PID\n"
 
       for csvFile in csvFileArr {
-          let newLine = "\(csvFile.time),\(csvFile.objFrontTemp),\(csvFile.objBackTemp),\(csvFile.ambFrontTemp),\(csvFile.ambBackTemp),\(csvFile.dutyCycleFront),\(csvFile.dutyCycleBack),\(csvFile.frontError),\(csvFile.backError)\n"
+          let newLine = "\(csvFile.time),\(csvFile.objFrontTemp),\(csvFile.objBackTemp),\(csvFile.ambFrontTemp),\(csvFile.ambBackTemp),\(csvFile.dutyCycleFront),\(csvFile.dutyCycleBack),\(csvFile.frontError),\(csvFile.frontProportional),\(csvFile.frontIntegral),\(csvFile.frontDerivative),\(csvFile.frontResultingPID),\(csvFile.backError),\(csvFile.backProportional),\(csvFile.backIntegral),\(csvFile.backDerivative),\(csvFile.backResultingPID)\n"
           csvText.append(newLine)
       }
       do {
@@ -653,11 +685,14 @@ extension HRMViewController: CBCentralManagerDelegate {
             // Disactivate the PID D Slider
             PIDSliderP.isEnabled = true
           }
-          PforPID = UInt8(PIDSliderP.value)
-          // NOTE, Scaling down the received range (0-100) to (0-100) by dividing by 1
-          PIDSliderP_Label.text = String(Float(PforPID) / 1)
-          // Send the current mode of operation to the chip, once it is connencted
-          writeToChar( withCharacteristic: PforPID_Characteristic!, withValue: Data([UInt8(PforPID)]))
+          let PtoSendPID: UInt8 = UInt8(PIDSliderP.value)
+          PIDSliderP.value = Float(PtoSendPID)
+          // PtoSendPID is casted as UInt8 to remove decimals, it is converted back to float to be used in PID
+          // HAVE TO DIVIDE BY 1 to scale DforPID down from 100 to 100
+          PforPID = Float(PtoSendPID) / 1
+          PIDSliderP_Label.text = String(PforPID)
+          writeToChar( withCharacteristic: PforPID_Characteristic!, withValue: Data([PtoSendPID]))
+          
        }else if characteristic.uuid == IforPID_CharacteristicCBUUID {
           // Set the characteristic
           IforPID_Characteristic = characteristic
@@ -665,11 +700,13 @@ extension HRMViewController: CBCentralManagerDelegate {
             // Disactivate the PID D Slider
             PIDSliderI.isEnabled = true
           }
-          IforPID = UInt8(PIDSliderI.value)
-          // NOTE, Scaling down the received range (0-100) to (0-20) by dividing by 5
-          PIDSliderI_Label.text = String(Float(IforPID) / 5)
-          // Send the current mode of operation to the chip, once it is connencted
-          writeToChar( withCharacteristic: IforPID_Characteristic!, withValue: Data([UInt8(IforPID)]))
+          let ItoSendPID: UInt8 = UInt8(PIDSliderI.value)
+          PIDSliderI.value = Float(ItoSendPID)
+          // ItoSendPID is casted as UInt8 to remove decimals, it is converted back to float to be used in PID
+          // HAVE TO DIVIDE BY 5 to scale IforPID down from 100 to 20
+          IforPID = Float(ItoSendPID) / 5
+          PIDSliderI_Label.text = String(IforPID)
+          writeToChar( withCharacteristic: IforPID_Characteristic!, withValue: Data([ItoSendPID]))
        }else if characteristic.uuid == DforPID_CharacteristicCBUUID {
           // Set the characteristic
           DforPID_Characteristic = characteristic
@@ -677,11 +714,13 @@ extension HRMViewController: CBCentralManagerDelegate {
             // Disactivate the PID D Slider
             PIDSliderD.isEnabled = true
           }
-          DforPID = UInt8(PIDSliderD.value)
-          // NOTE, Scaling down the received range (0-100) to (0-5) by dividing by 20
-          PIDSliderD_Label.text = String(Float(DforPID) / 20)
-          // Send the current mode of operation to the chip, once it is connencted
-          writeToChar( withCharacteristic: DforPID_Characteristic!, withValue: Data([UInt8(DforPID)]))
+           let DtoSendPID: UInt8 = UInt8(PIDSliderD.value)
+           PIDSliderD.value = Float(DtoSendPID)
+           // DtoSendPID is casted as UInt8 to remove decimals, it is converted back to float to be used in PID
+           // HAVE TO DIVIDE BY 20 to scale DforPID down from 100 to 5
+           DforPID = Float(DtoSendPID) / 20
+           PIDSliderD_Label.text = String(DforPID)
+           writeToChar( withCharacteristic: DforPID_Characteristic!, withValue: Data([DtoSendPID]))
        }
       
       
@@ -720,9 +759,25 @@ extension HRMViewController: CBCentralManagerDelegate {
           csvFile.dutyCycleFront = dutyCycleFront
           csvFile.dutyCycleBack = dutyCycleBack
           if modeOfOperation == 0 {
-            csvFile.frontError = String(frontDesiredTempStepper.value - object_t_VDD)
-            csvFile.backError = String(backDesiredTempStepper.value - object_t_GND)
-          }
+            // This getPID() function will update Proportional, Integral, Derivative and Resulting PID for the Front section
+            print(" frontPreviousError is \(frontPreviousError)")
+            GetPID(set_point: Float(frontDesiredTempStepper!.value), object_t: object_t_VDD, p_scalar: PforPID, i_scalar: IforPID, d_scalar: DforPID, proportional: &frontProportional, integral: &frontIntegral, derivative: &frontDerivative, previous_error: &frontPreviousError, resultingPID: &frontResultingPID)
+            
+            csvFile.frontError = String(format: "%.2f",(frontDesiredTempStepper.value - object_t_VDD))
+            csvFile.frontProportional = String(format: "%.2f",frontProportional)
+            csvFile.frontIntegral = String(format: "%.2f",frontIntegral)
+            csvFile.frontDerivative = String(format: "%.2f",frontDerivative)
+            csvFile.frontResultingPID = String(format: "%.2f",frontResultingPID)
+            print(" frontError is \(csvFile.frontError), frontPreviousError is \(frontPreviousError),frontProportional  is \(csvFile.frontProportional),frontIntegral  is \(csvFile.frontIntegral), frontDerivative is \(csvFile.frontDerivative),  frontResultingPID is \(csvFile.frontResultingPID)")
+            // This getPID() function will update Proportional, Integral, Derivative and Resulting PID for the Back section
+            print(" backPreviousError is \(backPreviousError)")
+            GetPID(set_point: Float(backDesiredTempStepper!.value), object_t: object_t_GND, p_scalar: PforPID, i_scalar: IforPID, d_scalar: DforPID, proportional: &backProportional, integral: &backIntegral, derivative: &backDerivative, previous_error: &backPreviousError, resultingPID: &backResultingPID)
+            csvFile.backError = String(format: "%.2f",(backDesiredTempStepper.value - object_t_GND))
+            csvFile.backProportional = String(format: "%.2f",backProportional)
+            csvFile.backIntegral = String(format: "%.2f",backIntegral)
+            csvFile.backDerivative = String(format: "%.2f",backDerivative)
+            csvFile.backResultingPID = String(format: "%.2f",backResultingPID)
+            print(" backError is \(csvFile.backError), backProportional  is \(csvFile.backProportional),backIntegral  is \(csvFile.backIntegral), backDerivative is \(csvFile.backDerivative),  backResultingPID is \(csvFile.backResultingPID)")          }
           // Appending that new variable to the array
           csvFileArr.append(csvFile!)
         }
@@ -815,6 +870,31 @@ extension HRMViewController: CBCentralManagerDelegate {
 }
 
 
+private func GetPID(set_point: Float, object_t: Double, p_scalar: Float, i_scalar: Float, d_scalar: Float, proportional: inout Float, integral: inout Float, derivative: inout Float, previous_error: inout Float, resultingPID: inout Float) -> Void{
 
+  let error: Float = set_point - Float(object_t)
+  proportional = error * (p_scalar)
+  // Boundary if statements, as duty cycle can not be over 100 and below 0.
+  // IMPORTANT As uint8_t variable, proportional may overflow. If so, either 0 or 100 is assigned to it
+  if (proportional >  100) {proportional = 100}
+  if (proportional < 0) {proportional = 0}
+
+  // calculate the integral component (summation of past errors * i scalar)
+  integral += error * (i_scalar)
+  if(integral >  100) {integral = 100} // limit wind-up
+  if(integral < 0) {integral = 0}
+
+  // calculate the derivative component (change since previous error * d scalar)
+  derivative = (error - previous_error) * (d_scalar)
+  previous_error = error
+
+  resultingPID = proportional + integral + derivative
+  // Limit
+  // Note, resultingPID is uit8 with max value of 256, so if variables are at their maximum value of 100, resultingPID will overflow.
+  // Hence, the sum is checked in the if statement instead of a value, whihc may overflow.
+  if(proportional + integral + derivative >  100) {resultingPID = 100}
+  if(proportional + integral + derivative < 0) {resultingPID = 0}
+  
+}
 
 
