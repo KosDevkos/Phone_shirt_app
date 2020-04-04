@@ -468,7 +468,7 @@ class HRMViewController: UIViewController {
           fileName = "\(fileNameTextField.text!).csv"
       }
       let path = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
-      var csvText = "Time (ms),Front Object Temperature (ºC),Back Object Temperature (ºC),Front Ambient Temperature (ºC),Back Ambient Temperature (ºC),Front Duty Cycle (%),Back Duty Cycle (%),Front PID Error (ºC),Front P,Front I,Front D,Front PID,Back PID Error(ºC),Back P,Back I,Back D,Back PID\n"
+      var csvText = "Time (ms),Front Object Temperature (C),Back Object Temperature (C),Front Ambient Temperature (C),Back Ambient Temperature (C),Front Duty Cycle (%),Back Duty Cycle (%),Front PID Error (C),Front P,Front I,Front D,Front PID,Back PID Error(ºC),Back P,Back I,Back D,Back PID\n"
 
       for csvFile in csvFileArr {
           let newLine = "\(csvFile.time),\(csvFile.objFrontTemp),\(csvFile.objBackTemp),\(csvFile.ambFrontTemp),\(csvFile.ambBackTemp),\(csvFile.dutyCycleFront),\(csvFile.dutyCycleBack),\(csvFile.frontError),\(csvFile.frontProportional),\(csvFile.frontIntegral),\(csvFile.frontDerivative),\(csvFile.frontResultingPID),\(csvFile.backError),\(csvFile.backProportional),\(csvFile.backIntegral),\(csvFile.backDerivative),\(csvFile.backResultingPID)\n"
