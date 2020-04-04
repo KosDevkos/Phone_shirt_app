@@ -307,8 +307,8 @@ class HRMViewController: UIViewController {
       
       PIDSliderD.value = Float(DtoSendPID)
       // DtoSendPID is casted as UInt8 to remove decimals, it is converted back to float to be used in PID
-      // HAVE TO DIVIDE BY 5 to scale DforPID down from 100 to 20
-      DforPID = Float(DtoSendPID) / 5
+      // HAVE TO DIVIDE BY 1 to scale DforPID down from 100 to 100
+      DforPID = Float(DtoSendPID) / 1
               
       PIDSliderD_Label.text = String(DforPID)
 
@@ -725,8 +725,8 @@ extension HRMViewController: CBCentralManagerDelegate {
            let DtoSendPID: UInt8 = UInt8(PIDSliderD.value)
            PIDSliderD.value = Float(DtoSendPID)
            // DtoSendPID is casted as UInt8 to remove decimals, it is converted back to float to be used in PID
-           // HAVE TO DIVIDE BY 5 to scale DforPID down from 100 to 20
-           DforPID = Float(DtoSendPID) / 5
+           // HAVE TO DIVIDE BY 1 to scale DforPID down from 100 to 100
+           DforPID = Float(DtoSendPID) / 1
            PIDSliderD_Label.text = String(DforPID)
            writeToChar( withCharacteristic: DforPID_Characteristic!, withValue: Data([DtoSendPID]))
        }
@@ -827,8 +827,9 @@ extension HRMViewController: CBCentralManagerDelegate {
       dutyCycleBack = back_TR_PWM
       print("back duty is \(dutyCycleBack)")
     case receivePID_CharacteristicCBUUID:
-      GetReceivedPID(frontProportional: &frontProportional, frontIntegral: &frontIntegral, frontDerivative: &frontDerivative, backProportional: &backProportional, backIntegral: &backIntegral, backDerivative: &backDerivative, from: characteristic)
+      GetReceivedPID(frontProportional: &frontProportional, frontIntegral: &frontIntegral, frontDerivative: &frontDerivative, frontResultingPID: &frontResultingPID, backProportional: &backProportional, backIntegral: &backIntegral, backDerivative: &backDerivative, backResultingPID: &backResultingPID, from: characteristic)
       
+      // Update P, I and D Labels under the front and back Duty cycles
       frontP_Label.text = frontProportional
       frontI_Label.text = frontIntegral
       frontD_Label.text = frontDerivative
@@ -886,21 +887,33 @@ extension HRMViewController: CBCentralManagerDelegate {
       return resultString
   }
     
-    private func GetReceivedPID(frontProportional: inout String, frontIntegral: inout String, frontDerivative: inout String, backProportional: inout String, backIntegral: inout String, backDerivative: inout String, from characteristic: CBCharacteristic) -> Void {
+    private func GetReceivedPID(frontProportional: inout String, frontIntegral: inout String, frontDerivative: inout String, frontResultingPID: inout String, backProportional: inout String, backIntegral: inout String, backDerivative: inout String, backResultingPID: inout String, from characteristic: CBCharacteristic) -> Void {
       guard let characteristicData = characteristic.value else { return }
       
       // The only way to convert "Data" to Int8 format (Normally only UInt8 works)
       let byteArray: [Int8] = characteristicData.map{Int8(bitPattern: $0)}
-
+      
+      //front
       frontProportional = String(Int8(byteArray[0]))
       frontIntegral = String(Int8(byteArray[1]))
       frontDerivative = String(Int8(byteArray[2]))
+      
+      var frontResultingPID_SUM: Int = Int(byteArray[2])+Int(byteArray[1])+Int(byteArray[0])
+      if (frontResultingPID_SUM > 100) {frontResultingPID_SUM = 100}
+      if (frontResultingPID_SUM < 0) {frontResultingPID_SUM = 0}
+      frontResultingPID = String(frontResultingPID_SUM)
+      
+      // back
       backProportional = String(Int8(byteArray[3]))
       backIntegral = String(Int8(byteArray[4]))
       backDerivative = String(Int8(byteArray[5]))
-  }
+      
+      var backResultingPID_SUM: Int = Int(byteArray[3])+Int(byteArray[4])+Int(byteArray[5])
+      if (backResultingPID_SUM > 100) {backResultingPID_SUM = 100}
+      if (backResultingPID_SUM < 0) {backResultingPID_SUM = 0}
+      backResultingPID = String(backResultingPID_SUM)
     
-    
+    }
 }
 
 
